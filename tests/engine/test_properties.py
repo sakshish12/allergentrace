@@ -4,7 +4,8 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from allergen_engine.graph import CycleError, topological_order, would_create_cycle
-from allergen_engine.model import Allergen, IngredientNode, RecipeNode, Status
+from allergen_engine.model import Allergen, EquipmentNode, IngredientNode, RecipeNode, Status, Summary
+from allergen_engine.policy import merge, pending_removals
 from allergen_engine.propagation import declare_all
 from allergen_engine.repository import InMemoryRepository
 
@@ -20,12 +21,18 @@ def kitchens(draw):
         contains = draw(allergen_sets)
         may = draw(allergen_sets) - contains  # an ingredient never has both (form validation)
         ingredients[i] = IngredientNode(i, f"I{i}", contains, may, draw(st.booleans()))
+    equipment = {
+        e: EquipmentNode(e, f"E{e}", draw(st.booleans())) for e in range(1000, 1000 + draw(st.integers(0, 3)))
+    }
     recipes = {}
     for r in range(100, 100 + draw(st.integers(1, 8))):
         parts = draw(st.lists(st.integers(0, n_ing - 1), max_size=4, unique=True))
         subs = draw(st.lists(st.sampled_from(sorted(recipes)), max_size=3, unique=True)) if recipes else []
-        recipes[r] = RecipeNode(r, f"R{r}", tuple(parts), tuple(subs))
-    return InMemoryRepository(ingredients, recipes)
+        tools = (
+            draw(st.lists(st.sampled_from(sorted(equipment)), max_size=2, unique=True)) if equipment else []
+        )
+        recipes[r] = RecipeNode(r, f"R{r}", tuple(parts), tuple(subs), tuple(tools))
+    return InMemoryRepository(ingredients, recipes, equipment)
 
 
 def leaf_ingredients(repo, rid):
@@ -107,3 +114,54 @@ def test_would_create_cycle_agrees_with_topological_order(edges, recipe, sub):
     except CycleError:
         creates = True
     assert would_create_cycle(edges, recipe, sub) == creates
+
+
+def contained(repo, rid):
+    return set().union(*(i.contains for i in leaf_ingredients(repo, rid)))
+
+
+def cross_reference(repo, rid):
+    """Naive BR-3: allergens of other recipes on shared, non-dedicated equipment, also through sub-recipes."""
+    recipe = repo.recipes()[rid]
+    found = set()
+    for eid in recipe.equipment_ids:
+        if not repo.equipment()[eid].dedicated:
+            for other in repo.recipes().values():
+                if other.id != rid and eid in other.equipment_ids:
+                    found |= contained(repo, other.id)
+    for sid in recipe.recipe_ids:
+        found |= cross_reference(repo, sid)
+    return found
+
+
+@settings(max_examples=300)
+@given(kitchens())
+def test_cross_contact_matches_reference(repo):
+    for rid, declaration in declare_all(repo).items():
+        assert set(declaration.cross_contact) == cross_reference(repo, rid) - contained(repo, rid)
+        for allergen, paths in declaration.cross_contact.items():
+            assert paths and declaration.status(allergen) is Status.MAY_CONTAIN
+
+
+summaries = st.builds(
+    lambda contains, may, ask: Summary(contains, may - contains, ask),
+    allergen_sets,
+    allergen_sets,
+    st.booleans(),
+)
+
+
+@given(st.one_of(st.none(), summaries), summaries)
+def test_br6_published_never_says_less_than_calculated_or_previously_published(published, calculated):
+    merged = merge(published, calculated)
+    assert not merged.contains & merged.may_contain
+    for allergen in Allergen:
+        assert merged.rank(allergen) == max(
+            calculated.rank(allergen), published.rank(allergen) if published else 0
+        )
+    assert merged.ask_staff >= calculated.ask_staff
+    weaker, ask_dropped = pending_removals(merged, calculated)
+    assert all(merged.rank(a) > calculated.rank(a) for a in weaker)
+    assert not ask_dropped or (merged.ask_staff and not calculated.ask_staff)
+    if published is None:
+        assert (weaker, ask_dropped) == (frozenset(), False)  # nothing to approve for a new recipe

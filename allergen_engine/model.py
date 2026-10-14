@@ -1,5 +1,5 @@
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import StrEnum
 
 
@@ -72,11 +72,19 @@ class IngredientNode:
 
 
 @dataclass(frozen=True)
+class EquipmentNode:
+    id: int
+    name: str
+    dedicated: bool  # dedicated equipment is used for one recipe only and causes no cross-contact
+
+
+@dataclass(frozen=True)
 class RecipeNode:
     id: int
     name: str
     ingredient_ids: tuple[int, ...]
     recipe_ids: tuple[int, ...]  # sub-recipes such as sauces or doughs
+    equipment_ids: tuple[int, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -86,14 +94,37 @@ class Declaration:
     contains: Mapping[Allergen, tuple[Path, ...]]
     may_contain: Mapping[Allergen, tuple[Path, ...]]
     unknown: tuple[Path, ...]  # paths to ingredients whose data is not checked yet
+    # BR-3: paths ending in (equipment, other recipe), e.g. ("Fryer", "Schnitzel")
+    cross_contact: Mapping[Allergen, tuple[Path, ...]] = field(default_factory=dict)
 
     @property
     def needs_staff(self) -> bool:
         return bool(self.unknown)
 
     def status(self, allergen: Allergen) -> Status:
+        return self.summary().status(allergen)
+
+    def summary(self) -> "Summary":
+        contains = frozenset(self.contains)
+        traces = (frozenset(self.may_contain) | frozenset(self.cross_contact)) - contains
+        return Summary(contains, traces, self.needs_staff)
+
+
+@dataclass(frozen=True)
+class Summary:
+    """What a declaration says, without the reasons: this is what gets published to guests."""
+
+    contains: frozenset[Allergen]
+    may_contain: frozenset[Allergen]
+    ask_staff: bool
+
+    def rank(self, allergen: Allergen) -> int:
+        """How strongly the allergen is declared: 2 contains, 1 may contain, 0 not declared."""
+        return 2 if allergen in self.contains else 1 if allergen in self.may_contain else 0
+
+    def status(self, allergen: Allergen) -> Status:
         if allergen in self.contains:
             return Status.CONTAINS
         if allergen in self.may_contain:
             return Status.MAY_CONTAIN
-        return Status.ASK_STAFF if self.needs_staff else Status.FREE
+        return Status.ASK_STAFF if self.ask_staff else Status.FREE
