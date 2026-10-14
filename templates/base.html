@@ -4,49 +4,77 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}{% if title %}{{ title }} – {% endif %}AllergenTrace{% endblock %}</title>
+  <title>{% block title %}{% firstof title object as page_title %}{% if page_title %}{{ page_title }} – {% endif %}AllergenTrace{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{% translate 'AllergenTrace helps small cafés, bakeries and restaurants keep their allergen information correct: enter allergens once per ingredient and every dish is calculated.' %}{% endblock %}">
+  <meta name="theme-color" content="#2f5d46">
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="icon" href="{% static 'img/favicon-32.png' %}" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
+  <link rel="preload" href="{% static 'vendor/fonts/atkinson-hyperlegible-latin-400-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
 <body class="d-flex flex-column min-vh-100">
-  <nav class="navbar navbar-expand-md border-bottom">
+  <a class="visually-hidden-focusable btn btn-primary position-absolute m-2" href="#main">{% translate "Skip to content" %}</a>
+  {% with url_name=request.resolver_match.url_name %}
+  <nav class="navbar navbar-expand-md border-bottom" aria-label="{% translate 'Main' %}">
     <div class="container">
-      <a class="navbar-brand fw-semibold" href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'home' %}{% endif %}">AllergenTrace</a>
+      <a class="navbar-brand" href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'home' %}{% endif %}">
+        <img src="{% static 'img/favicon.svg' %}" width="30" height="30" alt=""> AllergenTrace
+      </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainnav"
-              aria-controls="mainnav" aria-expanded="false" aria-label="{% translate 'Menu' %}">
+              aria-controls="mainnav" aria-expanded="false" aria-label="{% translate 'Open menu' %}">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="mainnav">
         {% if user.is_authenticated and user.membership %}
         <ul class="navbar-nav me-auto">
-          <li class="nav-item"><a class="nav-link" href="{% url 'ingredient_list' %}">{% translate "Ingredients" %}</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'supplier_list' %}">{% translate "Suppliers" %}</a></li>
+          <li class="nav-item"><a class="nav-link{% if 'ingredient' in url_name %} active{% endif %}" {% if 'ingredient' in url_name %}aria-current="page"{% endif %} href="{% url 'ingredient_list' %}">{% translate "Ingredients" %}</a></li>
+          <li class="nav-item"><a class="nav-link{% if 'supplier' in url_name %} active{% endif %}" {% if 'supplier' in url_name %}aria-current="page"{% endif %} href="{% url 'supplier_list' %}">{% translate "Suppliers" %}</a></li>
           {% if user.membership.is_owner %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'staff_list' %}">{% translate "Staff" %}</a></li>
+          <li class="nav-item"><a class="nav-link{% if 'staff' in url_name %} active{% endif %}" {% if 'staff' in url_name %}aria-current="page"{% endif %} href="{% url 'staff_list' %}">{% translate "Staff" %}</a></li>
           {% endif %}
         </ul>
-        <span class="navbar-text small me-3">{{ user.membership.business }} · {{ user.membership.get_role_display }}</span>
-        <form method="post" action="{% url 'logout' %}">{% csrf_token %}
-          <button class="btn btn-outline-secondary btn-sm" type="submit">{% translate "Log out" %}</button>
-        </form>
+        <div class="d-md-flex align-items-center gap-3 py-2 py-md-0">
+          <div class="nav-context mb-2 mb-md-0">
+            <div class="fw-bold text-body">{{ user.membership.business }}</div>
+            <div>{{ user.membership.get_role_display }}</div>
+          </div>
+          <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+            <button class="btn btn-outline-secondary btn-sm" type="submit">{% translate "Log out" %}</button>
+          </form>
+        </div>
         {% elif not user.is_authenticated %}
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">{% translate "Log in" %}</a></li>
-          <li class="nav-item"><a class="btn btn-primary btn-sm ms-md-2" href="{% url 'signup' %}">{% translate "Register your business" %}</a></li>
+        <ul class="navbar-nav ms-auto align-items-md-center gap-md-2">
+          <li class="nav-item"><a class="nav-link{% if url_name == 'login' %} active{% endif %}" href="{% url 'login' %}">{% translate "Log in" %}</a></li>
+          <li class="nav-item"><a class="btn btn-primary btn-sm my-2 my-md-0" href="{% url 'signup' %}">{% translate "Register your business" %}</a></li>
         </ul>
         {% endif %}
       </div>
     </div>
   </nav>
-  <main class="container py-4 flex-grow-1">
+  {% endwith %}
+
+  <main id="main" class="container py-4 py-md-5 flex-grow-1">
     {% for message in messages %}
-    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}" role="status">{{ message }}</div>
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}" role="{% if message.tags == 'error' %}alert{% else %}status{% endif %}">{{ message }}</div>
     {% endfor %}
     {% block content %}{% endblock %}
   </main>
-  <footer class="border-top py-3 small text-body-secondary">
+
+  <footer class="site-footer border-top py-4">
     <div class="container">
-      {% translate "AllergenTrace supports food businesses. The business remains responsible for the allergen information it gives to guests." %}
+      <ul class="mb-3" aria-label="{% translate 'Footer' %}">
+        <li><a href="{% url 'home' %}">{% translate "Home" %}</a></li>
+        {% if not user.is_authenticated %}
+        <li><a href="{% url 'signup' %}">{% translate "Register" %}</a></li>
+        <li><a href="{% url 'login' %}">{% translate "Log in" %}</a></li>
+        {% endif %}
+        <li><a href="https://eur-lex.europa.eu/eli/reg/2011/1169/oj" rel="noopener">{% translate "Regulation (EU) No 1169/2011" %}</a></li>
+        <li><a href="https://github.com/sakshish12/allergentrace" rel="noopener">{% translate "Source code" %}</a></li>
+      </ul>
+      <p class="mb-1 measure">{% translate "AllergenTrace supports food businesses with their allergen information. The business remains responsible for what it tells its guests." %}</p>
+      <p class="mb-0">© {% now "Y" %} Sakshi Sharma. {% translate "Student project at IU International University of Applied Sciences." %}</p>
     </div>
   </footer>
   <script src="{% static 'vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>

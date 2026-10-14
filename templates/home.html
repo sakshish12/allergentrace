@@ -1,15 +1,54 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% block title %}AllergenTrace – {% translate "Allergen information for small food businesses" %}{% endblock %}
 {% block content %}
-<div class="row">
-  <div class="col-lg-8">
-    <h1 class="mb-3">{% translate "Allergen information you can trust" %}</h1>
-    <p class="lead">
-      {% translate "AllergenTrace helps small cafés, bakeries and restaurants keep their allergen information correct. Allergens are entered once per ingredient, and the declaration of every dish is calculated from its recipe, including sub-recipes and cross-contact from shared equipment." %}
+<section class="hero row align-items-center gy-5">
+  <div class="col-lg-7">
+    <h1>{% translate "Know why every dish contains what it contains." %}</h1>
+    <p class="lead mb-4">
+      {% translate "Enter allergens once per ingredient. AllergenTrace works out every dish from its recipe, follows sauces and doughs into each dish that uses them, and warns about cross-contact from shared equipment." %}
     </p>
-    <p class="text-body-secondary">
-      {% translate "This is an early version. Sign-up, recipes and the guest menu are being built in the coming sprints." %}
-    </p>
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-primary btn-lg" href="{% url 'signup' %}">{% translate "Register your business" %}</a>
+      <a class="btn btn-outline-secondary btn-lg" href="{% url 'login' %}">{% translate "Log in" %}</a>
+    </div>
   </div>
-</div>
+  <div class="col-lg-5 d-flex justify-content-center">
+    <figure class="ticket mb-0" aria-label="{% translate 'Example: allergen declaration of a dish' %}">
+      <div class="ticket-dish">Pasta al pesto</div>
+      <dl>
+        <dt>{% translate "Contains" %}</dt>
+        <dd>
+          <ul class="chips mb-2"><li class="chip">{% translate "Gluten" %}</li><li class="chip">{% translate "Milk" %}</li><li class="chip">{% translate "Nuts" %}</li></ul>
+          <div class="trace-path">{% translate "Milk:" %} <span class="step">{% translate "Pesto" %}</span><span class="arrow" aria-label="{% translate 'contains' %}">→</span><span class="step">Parmesan</span></div>
+          <div class="trace-path">{% translate "Nuts:" %} <span class="step">{% translate "Pesto" %}</span><span class="arrow" aria-label="{% translate 'contains' %}">→</span><span class="step">{% translate "Cashews" %}</span></div>
+          <div class="trace-path">{% translate "Gluten:" %} <span class="step">{% translate "Durum wheat pasta" %}</span></div>
+        </dd>
+        <dt>{% translate "May contain" %}</dt>
+        <dd>
+          <ul class="chips mb-2"><li class="chip chip-trace">{% translate "Peanuts" %}</li></ul>
+          <div class="trace-path">{% translate "Shared nut grinder with the satay sauce" %}</div>
+        </dd>
+      </dl>
+    </figure>
+  </div>
+</section>
+
+<section class="py-4 border-top" aria-labelledby="how">
+  <h2 id="how" class="h3 mb-4">{% translate "How it works" %}</h2>
+  <ol class="steps">
+    <li>
+      <h3>{% translate "Enter your ingredients" %}</h3>
+      <p class="text-body-secondary mb-0">{% translate "Tick the allergens from the product label once. Ingredients nobody has checked stay marked as unknown." %}</p>
+    </li>
+    <li>
+      <h3>{% translate "Build your recipes" %}</h3>
+      <p class="text-body-secondary mb-0">{% translate "Use sauces and doughs as parts of dishes. When the pesto changes, every dish with pesto changes too." %}</p>
+    </li>
+    <li>
+      <h3>{% translate "Show guests a reliable menu" %}</h3>
+      <p class="text-body-secondary mb-0">{% translate "Guests scan a QR code and hide what they cannot eat. Removing an allergen needs the owner's approval first." %}</p>
+    </li>
+  </ol>
+</section>
 {% endblock %}

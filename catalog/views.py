@@ -22,6 +22,12 @@ class DeleteConfirmView(BusinessScopedMixin, DeleteView):
     template_name = "confirm_delete.html"
     form_class = forms.Form
 
+    def form_valid(self, form):
+        name = str(self.object)
+        response = super().form_valid(form)
+        messages.success(self.request, _("“%(name)s” deleted.") % {"name": name})
+        return response
+
 
 # US-03: suppliers
 

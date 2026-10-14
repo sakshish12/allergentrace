@@ -5,6 +5,7 @@ class BootstrapFormMixin:
     """Adds Bootstrap 5 classes to every widget, so templates can render fields with `as_field_group`."""
 
     def __init__(self, *args, **kwargs):
+        kwargs.setdefault("label_suffix", "")  # "Name" instead of Django's "Name:"
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             widget = field.widget

@@ -1,11 +1,14 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% block title %}{% translate "Delete" %} {{ object }} – AllergenTrace{% endblock %}
 {% block content %}
-<h1 class="h3 mb-3">{% blocktranslate %}Delete “{{ object }}”?{% endblocktranslate %}</h1>
-<p>{% translate "This cannot be undone." %}</p>
-<form method="post">
-  {% csrf_token %}
-  <button class="btn btn-danger" type="submit">{% translate "Delete" %}</button>
-  <a class="btn btn-link" href="javascript:history.back()">{% translate "Cancel" %}</a>
-</form>
+<div class="measure">
+  <h1 class="h2 mb-3">{% blocktranslate %}Delete “{{ object }}”?{% endblocktranslate %}</h1>
+  <p>{% translate "This cannot be undone." %}</p>
+  <form method="post" class="d-flex flex-wrap gap-2">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">{% translate "Delete" %}</button>
+    <a class="btn btn-outline-secondary" href="{{ view.success_url }}">{% translate "Cancel" %}</a>
+  </form>
+</div>
 {% endblock %}

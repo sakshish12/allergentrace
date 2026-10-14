@@ -30,11 +30,25 @@ class SignupView(FormView):
         business = Business.objects.create(name=form.cleaned_data["business_name"])
         Membership.objects.create(user=user, business=business, role=Role.OWNER)
         login(self.request, user, backend="django.contrib.auth.backends.ModelBackend")
+        messages.success(
+            self.request,
+            _("Welcome! %(business)s is registered. Start with your suppliers and ingredients.")
+            % {"business": business},
+        )
         return super().form_valid(form)
 
 
 class DashboardView(MemberRequiredMixin, TemplateView):
     template_name = "accounts/dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        ingredients = self.request.business.ingredients
+        return super().get_context_data(
+            ingredient_count=ingredients.count(),
+            unknown_count=ingredients.filter(status="unknown").count(),
+            supplier_count=self.request.business.suppliers.count(),
+            **kwargs,
+        )
 
 
 class StaffListView(MemberRequiredMixin, ListView):

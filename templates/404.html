@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Page not found" %} – AllergenTrace{% endblock %}
+{% block meta_description %}{% translate "This page does not exist." %}{% endblock %}
+{% block content %}
+<div class="measure py-4">
+  <h1 class="mb-3">{% translate "This page does not exist" %}</h1>
+  <p class="lead">{% translate "The link may be old, or the entry was deleted or belongs to another business." %}</p>
+  <a class="btn btn-primary" href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'home' %}{% endif %}">{% translate "Go to the start page" %}</a>
+</div>
+{% endblock %}

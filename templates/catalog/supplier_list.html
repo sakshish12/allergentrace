@@ -1,29 +1,34 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% block title %}{% translate "Suppliers" %} – AllergenTrace{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h1 class="h3 mb-0">{% translate "Suppliers" %}</h1>
+<div class="page-head">
+  <h1 class="h2">{% translate "Suppliers" %}</h1>
   {% if user.membership.can_edit %}<a class="btn btn-primary" href="{% url 'supplier_create' %}">{% translate "New supplier" %}</a>{% endif %}
 </div>
 {% if object_list %}
-<div class="table-responsive">
-<table class="table align-middle">
-  <thead><tr><th>{% translate "Name" %}</th><th>{% translate "Contact" %}</th><th></th></tr></thead>
+<table class="data-table">
+  <thead><tr><th scope="col">{% translate "Supplier" %}</th><th scope="col">{% translate "Phone" %}</th><th scope="col">{% translate "E-mail" %}</th>{% if user.membership.can_edit %}<th scope="col"><span class="visually-hidden">{% translate "Actions" %}</span></th>{% endif %}</tr></thead>
   <tbody>
   {% for supplier in object_list %}
     <tr>
-      <td>{{ supplier.name }}</td>
-      <td>{{ supplier.contact }}</td>
-      <td class="text-end text-nowrap">{% if user.membership.can_edit %}
-        <a href="{% url 'supplier_update' supplier.pk %}">{% translate "Edit" %}</a> ·
-        <a class="link-danger" href="{% url 'supplier_delete' supplier.pk %}">{% translate "Delete" %}</a>{% endif %}
+      <td><div class="fw-bold">{{ supplier.name }}</div>{% if supplier.contact_person %}<div class="small text-body-secondary">{{ supplier.contact_person }}</div>{% endif %}</td>
+      <td data-label="{% translate 'Phone' %}">{% if supplier.phone_href %}<a href="{{ supplier.phone_href }}">{{ supplier.phone }}</a>{% else %}<span class="text-body-secondary">{% translate "not given" %}</span>{% endif %}</td>
+      <td data-label="{% translate 'E-mail' %}">{% if supplier.email %}<a href="mailto:{{ supplier.email }}">{{ supplier.email }}</a>{% else %}<span class="text-body-secondary">{% translate "not given" %}</span>{% endif %}</td>
+      {% if user.membership.can_edit %}
+      <td class="row-actions">
+        <a href="{% url 'supplier_update' supplier.pk %}">{% translate "Edit" %}<span class="visually-hidden"> {{ supplier.name }}</span></a>
+        <a class="link-danger" href="{% url 'supplier_delete' supplier.pk %}">{% translate "Delete" %}<span class="visually-hidden"> {{ supplier.name }}</span></a>
       </td>
+      {% endif %}
     </tr>
   {% endfor %}
   </tbody>
 </table>
-</div>
 {% else %}
-<p class="text-body-secondary">{% translate "No suppliers yet." %}</p>
+<div class="measure">
+  <p class="lead">{% translate "No suppliers yet. Add the companies you buy from, so you know whom to ask when allergen data is missing." %}</p>
+  {% if user.membership.can_edit %}<a class="btn btn-primary" href="{% url 'supplier_create' %}">{% translate "Add your first supplier" %}</a>{% endif %}
+</div>
 {% endif %}
 {% endblock %}

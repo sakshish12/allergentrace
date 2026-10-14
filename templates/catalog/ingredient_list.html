@@ -1,44 +1,56 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% block title %}{% translate "Ingredients" %} – AllergenTrace{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h1 class="h3 mb-0">{% translate "Ingredients" %}</h1>
+<div class="page-head">
+  <h1 class="h2">{% translate "Ingredients" %}</h1>
   {% if user.membership.can_edit %}<a class="btn btn-primary" href="{% url 'ingredient_create' %}">{% translate "New ingredient" %}</a>{% endif %}
 </div>
 {% if object_list %}
-<div class="table-responsive">
-<table class="table align-middle">
+<table class="data-table">
   <thead><tr>
-    <th>{% translate "Ingredient" %}</th><th>{% translate "Contains" %}</th><th>{% translate "May contain" %}</th>
-    <th>{% translate "Data" %}</th><th></th>
+    <th scope="col">{% translate "Ingredient" %}</th><th scope="col">{% translate "Contains" %}</th>
+    <th scope="col">{% translate "May contain" %}</th><th scope="col">{% translate "Allergen data" %}</th>
+    {% if user.membership.can_edit %}<th scope="col"><span class="visually-hidden">{% translate "Actions" %}</span></th>{% endif %}
   </tr></thead>
   <tbody>
   {% for ingredient in object_list %}
     <tr>
       <td>
-        <div class="fw-medium">{{ ingredient.name }}</div>
-        <div class="small text-body-secondary">{{ ingredient.product_name }}{% if ingredient.supplier %}{% if ingredient.product_name %} · {% endif %}{{ ingredient.supplier }}{% endif %}</div>
+        <div class="fw-bold">{{ ingredient.name }}</div>
+        {% if ingredient.product_name %}<div class="small text-body-secondary">{{ ingredient.product_name }}</div>{% endif %}
+        {% if ingredient.supplier %}<div class="small text-body-secondary">{{ ingredient.supplier }}</div>{% endif %}
       </td>
-      <td>{{ ingredient.contains_labels|join:", "|default:"–" }}</td>
-      <td>{{ ingredient.may_contain_labels|join:", "|default:"–" }}</td>
-      <td class="text-nowrap">
+      <td data-label="{% translate 'Contains' %}">
+        {% if ingredient.contains %}<ul class="chips">{% for label in ingredient.contains_labels %}<li class="chip">{{ label }}</li>{% endfor %}</ul>
+        {% else %}<span class="text-body-secondary">{% translate "none" %}</span>{% endif %}
+      </td>
+      <td data-label="{% translate 'May contain' %}">
+        {% if ingredient.may_contain %}<ul class="chips">{% for label in ingredient.may_contain_labels %}<li class="chip chip-trace">{{ label }}</li>{% endfor %}</ul>
+        {% else %}<span class="text-body-secondary">{% translate "none" %}</span>{% endif %}
+      </td>
+      <td data-label="{% translate 'Allergen data' %}">
         {% if ingredient.status == "complete" %}
-        <span class="badge text-bg-success">{% translate "Checked" %}</span>
-        <div class="small text-body-secondary">{{ ingredient.verified_on|date:"SHORT_DATE_FORMAT" }}</div>
+        <span class="badge-status badge-checked">{% translate "Checked" %}</span>
+        <div class="small text-body-secondary">{{ ingredient.verified_on|date:"d.m.Y" }}</div>
         {% else %}
-        <span class="badge text-bg-warning">{% translate "Unknown" %}</span>
+        <span class="badge-status badge-unknown">{% translate "Unknown" %}</span>
         {% endif %}
       </td>
-      <td class="text-end text-nowrap">{% if user.membership.can_edit %}
-        <a href="{% url 'ingredient_update' ingredient.pk %}">{% translate "Edit" %}</a> ·
-        <a class="link-danger" href="{% url 'ingredient_delete' ingredient.pk %}">{% translate "Delete" %}</a>{% endif %}
+      {% if user.membership.can_edit %}
+      <td class="row-actions">
+        <a href="{% url 'ingredient_update' ingredient.pk %}">{% translate "Edit" %}<span class="visually-hidden"> {{ ingredient.name }}</span></a>
+        <a class="link-danger" href="{% url 'ingredient_delete' ingredient.pk %}">{% translate "Delete" %}<span class="visually-hidden"> {{ ingredient.name }}</span></a>
       </td>
+      {% endif %}
     </tr>
   {% endfor %}
   </tbody>
 </table>
-</div>
 {% else %}
-<p class="text-body-secondary">{% translate "No ingredients yet." %}</p>
+<div class="measure">
+  <p class="lead">{% translate "No ingredients yet. Enter each ingredient once with the allergens from its label; your dishes will be calculated from them." %}</p>
+  {% if user.membership.can_edit %}<a class="btn btn-primary" href="{% url 'ingredient_create' %}">{% translate "Add your first ingredient" %}</a>{% endif %}
+</div>
 {% endif %}
 {% endblock %}

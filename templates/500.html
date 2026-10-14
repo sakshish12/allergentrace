@@ -1,0 +1,19 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Something went wrong – AllergenTrace</title>
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+  {# Kept standalone: the server error page must not depend on the database or the logged-in user. #}
+  <main class="container py-5 measure">
+    <h1 class="mb-3">Something went wrong on our side</h1>
+    <p class="lead">Your last change may not have been saved. Please go back, check the entry and try again.</p>
+    <a class="btn btn-primary" href="/">Go to the start page</a>
+  </main>
+</body>
+</html>

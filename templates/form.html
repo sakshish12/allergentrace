@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block content %}
-<div class="row">
-  <div class="col-md-8 col-lg-6">
-    <h1 class="h3 mb-4">{% firstof title object %}</h1>
-    <form method="post" novalidate>
-      {% csrf_token %}
-      {{ form.non_field_errors }}
-      {% for field in form %}
-      <div class="mb-3{% if field.widget_type == 'checkbox' %} form-check{% endif %}">{{ field.as_field_group }}</div>
-      {% endfor %}
+<div class="measure">
+  <h1 class="h2 mb-4">{% firstof title object %}</h1>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% include "_form_errors.html" %}
+    {% for field in form %}
+    <div class="mb-3{% if field.widget_type == 'checkbox' %} form-check{% endif %}">{{ field.as_field_group }}</div>
+    {% endfor %}
+    <div class="d-flex flex-wrap gap-2 mt-4">
       <button class="btn btn-primary" type="submit">{% translate "Save" %}</button>
-      <a class="btn btn-link" href="javascript:history.back()">{% translate "Cancel" %}</a>
-    </form>
-  </div>
+      <a class="btn btn-outline-secondary" href="{{ view.success_url }}">{% translate "Cancel" %}</a>
+    </div>
+  </form>
 </div>
 {% endblock %}

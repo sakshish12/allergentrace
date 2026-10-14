@@ -1,23 +1,23 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% block title %}{% translate "Staff" %} – AllergenTrace{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h1 class="h3 mb-0">{% translate "Staff" %}</h1>
-  <a class="btn btn-primary" href="{% url 'staff_create' %}">{% translate "New account" %}</a>
+<div class="page-head">
+  <h1 class="h2">{% translate "Staff" %}</h1>
+  <a class="btn btn-primary" href="{% url 'staff_create' %}">{% translate "New staff account" %}</a>
 </div>
-<div class="table-responsive">
-<table class="table align-middle">
-  <thead><tr><th>{% translate "E-mail" %}</th><th>{% translate "Role" %}</th><th>{% translate "Status" %}</th><th></th></tr></thead>
+<p class="measure text-body-secondary">{% translate "Kitchen staff can edit ingredients, suppliers and recipes. Service staff can only read them." %}</p>
+<table class="data-table">
+  <thead><tr><th scope="col">{% translate "E-mail" %}</th><th scope="col">{% translate "Role" %}</th><th scope="col">{% translate "Status" %}</th><th scope="col"><span class="visually-hidden">{% translate "Actions" %}</span></th></tr></thead>
   <tbody>
   {% for membership in object_list %}
     <tr>
-      <td>{{ membership.user.email }}</td>
-      <td>{{ membership.get_role_display }}</td>
-      <td>{% if membership.user.is_active %}{% translate "Active" %}{% else %}<span class="text-body-secondary">{% translate "Deactivated" %}</span>{% endif %}</td>
-      <td class="text-end">{% if not membership.is_owner %}<a href="{% url 'staff_update' membership.pk %}">{% translate "Edit" %}</a>{% endif %}</td>
+      <td><a href="mailto:{{ membership.user.email }}">{{ membership.user.email }}</a></td>
+      <td data-label="{% translate 'Role' %}">{{ membership.get_role_display }}</td>
+      <td data-label="{% translate 'Status' %}">{% if membership.user.is_active %}{% translate "Active" %}{% else %}<span class="text-body-secondary">{% translate "Deactivated" %}</span>{% endif %}</td>
+      <td class="row-actions">{% if not membership.is_owner %}<a href="{% url 'staff_update' membership.pk %}">{% translate "Edit" %}<span class="visually-hidden"> {{ membership.user.email }}</span></a>{% endif %}</td>
     </tr>
   {% endfor %}
   </tbody>
 </table>
-</div>
 {% endblock %}

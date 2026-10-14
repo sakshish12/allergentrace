@@ -1,32 +1,35 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% block title %}{% translate "Overview" %} – AllergenTrace{% endblock %}
 {% block content %}
-<h1 class="h3 mb-1">{{ request.business }}</h1>
+<h1 class="h2 mb-1">{{ request.business }}</h1>
 <p class="text-body-secondary mb-4">{% blocktranslate with role=user.membership.get_role_display %}You are logged in as {{ role }}.{% endblocktranslate %}</p>
+
+{% if unknown_count %}
+<div class="alert alert-warning measure" role="status">
+  {% blocktranslate count counter=unknown_count %}{{ counter }} ingredient has no checked allergen data yet. Dishes using it will show “please ask staff”.{% plural %}{{ counter }} ingredients have no checked allergen data yet. Dishes using them will show “please ask staff”.{% endblocktranslate %}
+  <a href="{% url 'ingredient_list' %}">{% translate "Review ingredients" %}</a>
+</div>
+{% endif %}
+
 <div class="row g-3">
   <div class="col-md-4">
-    <a class="card h-100 text-decoration-none" href="{% url 'ingredient_list' %}">
-      <div class="card-body">
-        <h2 class="h5 card-title">{% translate "Ingredients" %}</h2>
-        <p class="card-text text-body-secondary">{% translate "Enter allergens once per ingredient." %}</p>
-      </div>
+    <a class="tile" href="{% url 'ingredient_list' %}">
+      <h2>{% translate "Ingredients" %}</h2>
+      <p>{% blocktranslate count counter=ingredient_count %}{{ counter }} ingredient{% plural %}{{ counter }} ingredients{% endblocktranslate %}</p>
     </a>
   </div>
   <div class="col-md-4">
-    <a class="card h-100 text-decoration-none" href="{% url 'supplier_list' %}">
-      <div class="card-body">
-        <h2 class="h5 card-title">{% translate "Suppliers" %}</h2>
-        <p class="card-text text-body-secondary">{% translate "Where your ingredients come from." %}</p>
-      </div>
+    <a class="tile" href="{% url 'supplier_list' %}">
+      <h2>{% translate "Suppliers" %}</h2>
+      <p>{% blocktranslate count counter=supplier_count %}{{ counter }} supplier{% plural %}{{ counter }} suppliers{% endblocktranslate %}</p>
     </a>
   </div>
   {% if user.membership.is_owner %}
   <div class="col-md-4">
-    <a class="card h-100 text-decoration-none" href="{% url 'staff_list' %}">
-      <div class="card-body">
-        <h2 class="h5 card-title">{% translate "Staff" %}</h2>
-        <p class="card-text text-body-secondary">{% translate "Accounts for your kitchen and service team." %}</p>
-      </div>
+    <a class="tile" href="{% url 'staff_list' %}">
+      <h2>{% translate "Staff" %}</h2>
+      <p>{% translate "Accounts for your kitchen and service team" %}</p>
     </a>
   </div>
   {% endif %}

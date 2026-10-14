@@ -1,18 +1,229 @@
-/* Small additions to Bootstrap. Django renders form errors as <ul class="errorlist">. */
+/* AllergenTrace design tokens and the few components Bootstrap does not cover.
+   Palette checked against WCAG 2.2 AA (see docs/design.md). */
+
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("../vendor/fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("../vendor/fonts/atkinson-hyperlegible-latin-400-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("../vendor/fonts/atkinson-hyperlegible-latin-700-normal.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("../vendor/fonts/bricolage-grotesque-latin-wght-normal.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --paper: #faf8f4;
+  --surface: #ffffff;
+  --ink: #2b2621;
+  --muted: #6b6259;
+  --line: #e5ded3;
+  --control-line: #8c8378;
+  --basil: #2f5d46;
+  --basil-dark: #24483a;
+  --basil-tint: #e9f0eb;
+  --saffron: #e8b04a;
+  --saffron-tint: #fbf1dc;
+  --tomato: #b23a2b;
+  --tomato-tint: #f8e7e4;
+
+  --font-body: "Atkinson Hyperlegible", system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", "Atkinson Hyperlegible", system-ui, sans-serif;
+
+  --bs-body-font-family: var(--font-body);
+  --bs-body-font-size: 1.0625rem;
+  --bs-body-line-height: 1.55;
+  --bs-body-color: var(--ink);
+  --bs-body-bg: var(--paper);
+  --bs-secondary-color: var(--muted);
+  --bs-border-color: var(--line);
+  --bs-link-color-rgb: 47, 93, 70;
+  --bs-link-hover-color-rgb: 36, 72, 58;
+  --bs-primary-rgb: 47, 93, 70;
+  --bs-border-radius: 0.5rem;
+  --bs-focus-ring-color: rgba(47, 93, 70, 0.35);
+}
+
+/* Typography: one display face for headings, one reading face for everything else. */
+h1, h2, h3, h4, .h1, .h2, .h3, .h4, .navbar-brand {
+  font-family: var(--font-display);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+.lead { font-size: 1.2rem; color: var(--muted); max-width: 38em; }
+.measure { max-width: 42em; }
+
+/* Brand */
+.navbar { background: var(--surface); }
+.navbar-brand { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--ink); font-size: 1.3rem; }
+.navbar-brand svg { flex: none; }
+.nav-link { color: var(--ink); }
+.nav-link:hover, .nav-link:focus-visible { color: var(--basil); }
+.nav-link.active { color: var(--basil); font-weight: 700; }
+.nav-context { font-size: 0.9rem; color: var(--muted); line-height: 1.2; }
+
+/* Buttons */
+.btn { font-weight: 700; border-radius: 0.5rem; }
+.btn-primary {
+  --bs-btn-bg: var(--basil);
+  --bs-btn-border-color: var(--basil);
+  --bs-btn-hover-bg: var(--basil-dark);
+  --bs-btn-hover-border-color: var(--basil-dark);
+  --bs-btn-active-bg: var(--basil-dark);
+  --bs-btn-active-border-color: var(--basil-dark);
+  --bs-btn-disabled-bg: var(--basil);
+  --bs-btn-disabled-border-color: var(--basil);
+}
+.btn-outline-secondary {
+  --bs-btn-color: var(--ink);
+  --bs-btn-border-color: var(--control-line);
+  --bs-btn-hover-bg: var(--ink);
+  --bs-btn-hover-border-color: var(--ink);
+}
+.btn-danger {
+  --bs-btn-bg: var(--tomato);
+  --bs-btn-border-color: var(--tomato);
+  --bs-btn-hover-bg: #932f23;
+  --bs-btn-hover-border-color: #932f23;
+}
+.link-danger { color: var(--tomato) !important; }
+
+/* Forms */
+.form-control, .form-select { border-color: var(--control-line); background-color: var(--surface); }
+.form-control:focus, .form-select:focus { border-color: var(--basil); box-shadow: 0 0 0 0.2rem var(--bs-focus-ring-color); }
+.form-label { font-weight: 700; margin-bottom: 0.3rem; }
+.form-check-input { border-color: var(--control-line); }
+.form-check-input:checked { background-color: var(--basil); border-color: var(--basil); }
+.helptext, .form-text { display: block; color: var(--muted); font-size: 0.9rem; margin-top: 0.25rem; }
 .errorlist {
   list-style: none;
   padding: 0;
-  margin: 0.25rem 0 0;
-  color: var(--bs-danger-text-emphasis);
-  font-size: 0.875rem;
+  margin: 0.3rem 0 0;
+  color: var(--tomato);
+  font-size: 0.925rem;
+  font-weight: 700;
+}
+.errorlist.nonfield {
+  background: var(--tomato-tint);
+  border-left: 4px solid var(--tomato);
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 1rem;
+}
+input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--tomato); }
+
+/* Messages */
+.alert { border: 0; border-left: 4px solid; border-radius: 0.375rem; }
+.alert-success { background: var(--basil-tint); border-color: var(--basil); color: var(--ink); }
+.alert-danger { background: var(--tomato-tint); border-color: var(--tomato); color: var(--ink); }
+.alert-info, .alert-warning { background: var(--saffron-tint); border-color: var(--saffron); color: var(--ink); }
+
+/* Status badges: colour plus a word, never colour alone */
+.badge-status { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 0.2em 0.6em; border-radius: 999px; }
+.badge-checked { background: var(--basil-tint); color: var(--basil-dark); }
+.badge-unknown { background: var(--saffron); color: var(--ink); }
+
+/* Allergen chips, used wherever allergens are listed */
+.chips { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0; padding: 0; list-style: none; }
+.chip { font-size: 0.85rem; padding: 0.1em 0.55em; border: 1px solid var(--control-line); border-radius: 0.3rem; background: var(--surface); }
+.chip-trace { border-style: dashed; color: var(--muted); }
+
+/* Page header with title and main action */
+.page-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1rem; margin-bottom: 1.25rem; }
+.page-head h1 { margin: 0; }
+
+/* Tables become stacked cards on narrow screens, so nothing scrolls sideways. */
+.data-table { width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 0.5rem; border-collapse: separate; border-spacing: 0; }
+.data-table th, .data-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.data-table thead th { font-size: 0.9rem; color: var(--muted); font-weight: 700; background: var(--paper); }
+.data-table tbody tr:last-child td { border-bottom: 0; }
+.row-actions { white-space: nowrap; text-align: right; }
+.row-actions a + a { margin-left: 1rem; }
+@media (max-width: 767.98px) {
+  .data-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; width: 100%; }
+  .data-table tr { border-bottom: 1px solid var(--line); padding: 0.5rem 0; }
+  .data-table tbody tr:last-child { border-bottom: 0; }
+  .data-table td { border: 0; padding: 0.3rem 1rem; }
+  .data-table td[data-label]::before { content: attr(data-label); display: block; font-size: 0.8rem; color: var(--muted); font-weight: 700; }
+  .row-actions { text-align: left; }
 }
 
-/* Bootstrap's default checkbox border is too light for WCAG 2.2 non-text contrast (3:1). */
-.form-check-input:not(:checked) {
-  border-color: var(--bs-secondary-color);
+/* Allergen entry table in the ingredient form */
+.allergen-table { width: 100%; max-width: 36rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.5rem; border-collapse: separate; border-spacing: 0; }
+.allergen-table thead th { font-size: 0.9rem; color: var(--muted); background: var(--paper); }
+.allergen-table td, .allergen-table th { vertical-align: middle; padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--line); }
+.allergen-table tbody tr:last-child > * { border-bottom: 0; }
+.allergen-table td { text-align: center; }
+.allergen-table .form-check-input { width: 1.25rem; height: 1.25rem; margin: 0; }
+
+/* Cards on the dashboard: one surface style, used only there */
+.tile { display: block; height: 100%; padding: 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.75rem; color: var(--ink); text-decoration: none; }
+.tile:hover, .tile:focus-visible { border-color: var(--basil); }
+.tile h2 { font-size: 1.25rem; margin-bottom: 0.35rem; color: var(--basil-dark); }
+.tile p { color: var(--muted); margin: 0; }
+
+/* Start page: the kitchen ticket shows the product's idea with a real example */
+.hero { padding: 2.5rem 0 3rem; }
+.hero h1 { font-size: clamp(2rem, 5vw, 3.1rem); max-width: 14em; margin-bottom: 1rem; }
+.ticket {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 6px solid var(--basil);
+  border-radius: 0.25rem 0.25rem 0.75rem 0.75rem;
+  padding: 1.25rem 1.4rem;
+  max-width: 26rem;
+  box-shadow: 0 1px 0 var(--line), 0 12px 24px -18px rgba(43, 38, 33, 0.45);
+  transform: rotate(-1.2deg);
+}
+.ticket-dish { font-family: var(--font-display); font-size: 1.35rem; font-weight: 650; margin-bottom: 0.75rem; }
+.ticket dl { margin: 0; }
+.ticket dt { font-size: 0.85rem; color: var(--muted); margin-top: 0.8rem; }
+.ticket dd { margin: 0.2rem 0 0; }
+.trace-path { font-size: 0.95rem; }
+.trace-path .step { white-space: nowrap; }
+.trace-path .arrow { color: var(--muted); margin: 0 0.25rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .ticket { transition: transform 0.3s ease; }
+  .ticket:hover { transform: rotate(0deg); }
+}
+.steps { counter-reset: step; list-style: none; padding: 0; display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+.steps li { counter-increment: step; }
+.steps li::before { content: counter(step); display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--basil-tint); color: var(--basil-dark); font-weight: 700; margin-bottom: 0.5rem; }
+.steps h3 { font-size: 1.15rem; }
+
+/* Footer */
+.site-footer { background: var(--surface); font-size: 0.95rem; color: var(--muted); }
+.site-footer a { color: var(--ink); }
+.site-footer ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; }
+
+/* Keyboard focus is always visible */
+a:focus-visible, button:focus-visible, .btn:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid var(--basil);
+  outline-offset: 2px;
 }
 
-.allergen-table td,
-.allergen-table th {
-  vertical-align: middle;
-}
+/* Long words (e-mails, compound German nouns) wrap instead of widening the page */
+body { overflow-wrap: anywhere; }
+
+/* Header backgrounds must follow the tables' rounded corners */
+.data-table thead th:first-child, .allergen-table thead th:first-child { border-top-left-radius: 0.5rem; }
+.data-table thead th:last-child, .allergen-table thead th:last-child { border-top-right-radius: 0.5rem; }

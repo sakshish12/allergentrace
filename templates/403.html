@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% translate "No access" %} – AllergenTrace{% endblock %}
+{% block meta_description %}{% translate "Your role does not allow this action." %}{% endblock %}
+{% block content %}
+<div class="measure py-4">
+  <h1 class="mb-3">{% translate "Your role does not allow this" %}</h1>
+  <p class="lead">{% translate "Ask the owner of your business if you need to make this change." %}</p>
+  <a class="btn btn-primary" href="{% url 'dashboard' %}">{% translate "Go to the start page" %}</a>
+</div>
+{% endblock %}
