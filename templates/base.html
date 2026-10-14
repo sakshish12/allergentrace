@@ -1,0 +1,26 @@
+{% load static i18n %}<!doctype html>
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}AllergenTrace{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <header class="navbar border-bottom">
+    <div class="container">
+      <a class="navbar-brand fw-semibold" href="{% url 'home' %}">AllergenTrace</a>
+    </div>
+  </header>
+  <main class="container py-4 flex-grow-1">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="border-top py-3 small text-body-secondary">
+    <div class="container">
+      {% translate "AllergenTrace supports food businesses. The business remains responsible for the allergen information it gives to guests." %}
+    </div>
+  </footer>
+  <script src="{% static 'vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+[project]
+name = "allergentrace"
+version = "0.1.0"
+description = "Allergen and cross-contact transparency for small food businesses"
+requires-python = ">=3.13"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+testpaths = ["tests"]
+# WhiteNoise expects the output of `collectstatic`, which tests do not run.
+filterwarnings = ["ignore:No directory at:UserWarning"]
+
+[tool.ruff]
+line-length = 110
+extend-exclude = ["*/migrations/*"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "DJ"]

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-8">
+    <h1 class="mb-3">{% translate "Allergen information you can trust" %}</h1>
+    <p class="lead">
+      {% translate "AllergenTrace helps small cafés, bakeries and restaurants keep their allergen information correct. Allergens are entered once per ingredient, and the declaration of every dish is calculated from its recipe, including sub-recipes and cross-contact from shared equipment." %}
+    </p>
+    <p class="text-body-secondary">
+      {% translate "This is an early version. Sign-up, recipes and the guest menu are being built in the coming sprints." %}
+    </p>
+  </div>
+</div>
+{% endblock %}
