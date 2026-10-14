@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Lint and test
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: allergentrace
+          POSTGRES_PASSWORD: allergentrace
+          POSTGRES_DB: allergentrace
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U allergentrace"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://allergentrace:allergentrace@localhost:5432/allergentrace
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - name: Generate a throwaway secret key
+        run: echo "DJANGO_SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(50))')" >> "$GITHUB_ENV"
+      - name: Ruff (lint and format)
+        run: ruff check . && ruff format --check .
+      - name: Django deployment checks
+        run: python manage.py check --deploy --fail-level WARNING
+      - name: Missing migrations
+        run: python manage.py makemigrations --check --dry-run
+      - name: Tests
+        run: pytest
+
+  docker:
+    name: Docker Compose smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start the stack
+        run: docker compose up --build -d
+      - name: Wait for the health check
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fs http://localhost:8000/health/; then exit 0; fi
+            sleep 2
+          done
+          docker compose logs
+          exit 1
+      - name: Stop the stack
+        if: always()
+        run: docker compose down -v
