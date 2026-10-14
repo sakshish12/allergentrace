@@ -6,17 +6,24 @@ AllergenTrace is used by café and bakery staff during a working day and read by
 
 ## Colours
 
-All text and control colours meet WCAG 2.2 level AA (checked with the WCAG contrast formula).
+The interface uses the AllergenTrace website colour palette. All text and control colours meet WCAG 2.2 level AA (checked with the WCAG contrast formula).
 
 | Token | Hex | Use | Contrast |
 |---|---|---|---|
-| Paper | `#FAF8F4` | page background | – |
-| Ink | `#2B2621` | body text | 14.1 : 1 on paper |
-| Muted | `#6B6259` | secondary text | 5.6 : 1 on paper |
-| Basil | `#2F5D46` | primary buttons, links, focus ring | 7.6 : 1 with white text |
-| Saffron | `#E8B04A` | "unknown" status, warnings | 7.7 : 1 with ink text |
-| Tomato | `#B23A2B` | delete actions, errors | 5.9 : 1 with white text |
-| Control line | `#8C8378` | borders of inputs and checkboxes | 3.7 : 1 (non-text, min. 3 : 1) |
+| Mist | `#F0F4EF` | page background | – |
+| Navy | `#0D1821` | body text, footer background | 16.2 : 1 on mist |
+| Slate | `#344966` | buttons, links, focus ring, logo | 9.2 : 1 with white text |
+| Light blue | `#B4CDED` | information messages, active menu item, footer links | 11.0 : 1 on navy |
+| Sage | `#BFCC94` | "Checked" badges, success messages, tick in the logo | 10.5 : 1 with navy text |
+| Muted (derived) | `#4A5A70` | secondary text | 6.3 : 1 on mist |
+| Control line (derived) | `#7A8796` | borders of inputs and checkboxes | 3.7 : 1 (non-text, min. 3 : 1) |
+
+Two signal colours stay outside the brand palette on purpose, because they carry safety meaning and must never look like decoration:
+
+| Token | Hex | Use | Contrast |
+|---|---|---|---|
+| Amber | `#E8B04A` | "Unknown" data and "Please ask staff" | 9.2 : 1 with navy text |
+| Red | `#A63A2B` | delete actions and errors | 6.4 : 1 with white text |
 
 Status is never shown by colour alone: every badge also carries a word ("Checked", "Unknown").
 

@@ -31,19 +31,28 @@
 }
 
 :root {
-  --paper: #faf8f4;
+  /* Brand palette (Website colour palette, AllergenTrace) */
+  --navy: #0d1821;
+  --slate: #344966;
+  --sky: #b4cded;
+  --mist: #f0f4ef;
+  --sage: #bfcc94;
+
+  --paper: var(--mist);
   --surface: #ffffff;
-  --ink: #2b2621;
-  --muted: #6b6259;
-  --line: #e5ded3;
-  --control-line: #8c8378;
-  --basil: #2f5d46;
-  --basil-dark: #24483a;
-  --basil-tint: #e9f0eb;
-  --saffron: #e8b04a;
-  --saffron-tint: #fbf1dc;
-  --tomato: #b23a2b;
-  --tomato-tint: #f8e7e4;
+  --ink: var(--navy);
+  --muted: #4a5a70;
+  --line: #d3dce4;
+  --control-line: #7a8796;
+  --primary: var(--slate);
+  --primary-dark: #263850;
+  --primary-tint: #e2ecf8;
+  --sage-tint: #e8edd6;
+  /* Safety signals stay outside the brand palette so they are never mistaken for decoration */
+  --caution: #e8b04a;
+  --caution-tint: #fbf1dc;
+  --danger: #a63a2b;
+  --danger-tint: #f6e4e1;
 
   --font-body: "Atkinson Hyperlegible", system-ui, sans-serif;
   --font-display: "Bricolage Grotesque", "Atkinson Hyperlegible", system-ui, sans-serif;
@@ -55,11 +64,11 @@
   --bs-body-bg: var(--paper);
   --bs-secondary-color: var(--muted);
   --bs-border-color: var(--line);
-  --bs-link-color-rgb: 47, 93, 70;
-  --bs-link-hover-color-rgb: 36, 72, 58;
-  --bs-primary-rgb: 47, 93, 70;
+  --bs-link-color-rgb: 52, 73, 102;
+  --bs-link-hover-color-rgb: 38, 56, 80;
+  --bs-primary-rgb: 52, 73, 102;
   --bs-border-radius: 0.5rem;
-  --bs-focus-ring-color: rgba(47, 93, 70, 0.35);
+  --bs-focus-ring-color: rgba(52, 73, 102, 0.35);
 }
 
 /* Typography: one display face for headings, one reading face for everything else. */
@@ -77,21 +86,24 @@ h1, h2, h3, h4, .h1, .h2, .h3, .h4, .navbar-brand {
 .navbar-brand { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--ink); font-size: 1.3rem; }
 .navbar-brand svg { flex: none; }
 .nav-link { color: var(--ink); }
-.nav-link:hover, .nav-link:focus-visible { color: var(--basil); }
-.nav-link.active { color: var(--basil); font-weight: 700; }
+.nav-link:hover, .nav-link:focus-visible { color: var(--primary); }
+.nav-link.active { color: var(--primary); font-weight: 700; }
+@media (min-width: 768px) {
+  .nav-link.active { box-shadow: inset 0 -3px 0 var(--sky); }
+}
 .nav-context { font-size: 0.9rem; color: var(--muted); line-height: 1.2; }
 
 /* Buttons */
 .btn { font-weight: 700; border-radius: 0.5rem; }
 .btn-primary {
-  --bs-btn-bg: var(--basil);
-  --bs-btn-border-color: var(--basil);
-  --bs-btn-hover-bg: var(--basil-dark);
-  --bs-btn-hover-border-color: var(--basil-dark);
-  --bs-btn-active-bg: var(--basil-dark);
-  --bs-btn-active-border-color: var(--basil-dark);
-  --bs-btn-disabled-bg: var(--basil);
-  --bs-btn-disabled-border-color: var(--basil);
+  --bs-btn-bg: var(--primary);
+  --bs-btn-border-color: var(--primary);
+  --bs-btn-hover-bg: var(--primary-dark);
+  --bs-btn-hover-border-color: var(--primary-dark);
+  --bs-btn-active-bg: var(--primary-dark);
+  --bs-btn-active-border-color: var(--primary-dark);
+  --bs-btn-disabled-bg: var(--primary);
+  --bs-btn-disabled-border-color: var(--primary);
 }
 .btn-outline-secondary {
   --bs-btn-color: var(--ink);
@@ -100,40 +112,41 @@ h1, h2, h3, h4, .h1, .h2, .h3, .h4, .navbar-brand {
   --bs-btn-hover-border-color: var(--ink);
 }
 .btn-danger {
-  --bs-btn-bg: var(--tomato);
-  --bs-btn-border-color: var(--tomato);
-  --bs-btn-hover-bg: #932f23;
-  --bs-btn-hover-border-color: #932f23;
+  --bs-btn-bg: var(--danger);
+  --bs-btn-border-color: var(--danger);
+  --bs-btn-hover-bg: #87301f;
+  --bs-btn-hover-border-color: #87301f;
 }
-.link-danger { color: var(--tomato) !important; }
+.link-danger { color: var(--danger) !important; }
 
 /* Forms */
 .form-control, .form-select { border-color: var(--control-line); background-color: var(--surface); }
-.form-control:focus, .form-select:focus { border-color: var(--basil); box-shadow: 0 0 0 0.2rem var(--bs-focus-ring-color); }
+.form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 0.2rem var(--bs-focus-ring-color); }
 .form-label { font-weight: 700; margin-bottom: 0.3rem; }
 .form-check-input { border-color: var(--control-line); }
-.form-check-input:checked { background-color: var(--basil); border-color: var(--basil); }
+.form-check-input:checked { background-color: var(--primary); border-color: var(--primary); }
 .helptext, .form-text { display: block; color: var(--muted); font-size: 0.9rem; margin-top: 0.25rem; }
 .errorlist {
   list-style: none;
   padding: 0;
   margin: 0.3rem 0 0;
-  color: var(--tomato);
+  color: var(--danger);
   font-size: 0.925rem;
   font-weight: 700;
 }
-input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--tomato); }
+input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--danger); }
 
 /* Messages: tinted surface with a thin border in the same hue */
 .alert { border: 1px solid; border-radius: 0.5rem; }
-.alert-success { background: var(--basil-tint); border-color: var(--basil); color: var(--ink); }
-.alert-danger { background: var(--tomato-tint); border-color: var(--tomato); color: var(--ink); }
-.alert-info, .alert-warning { background: var(--saffron-tint); border-color: var(--saffron); color: var(--ink); }
+.alert-success { background: var(--sage-tint); border-color: var(--sage); color: var(--ink); }
+.alert-danger { background: var(--danger-tint); border-color: var(--danger); color: var(--ink); }
+.alert-info { background: var(--primary-tint); border-color: var(--sky); color: var(--ink); }
+.alert-warning { background: var(--caution-tint); border-color: var(--caution); color: var(--ink); }
 
 /* Status badges: colour plus a word, never colour alone */
 .badge-status { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 0.2em 0.6em; border-radius: 999px; }
-.badge-checked { background: var(--basil-tint); color: var(--basil-dark); }
-.badge-unknown { background: var(--saffron); color: var(--ink); }
+.badge-checked { background: var(--sage); color: var(--ink); }
+.badge-unknown { background: var(--caution); color: var(--ink); }
 
 /* Allergen chips, used wherever allergens are listed */
 .chips { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0; padding: 0; list-style: none; }
@@ -171,8 +184,8 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--to
 
 /* Cards on the dashboard: one surface style, used only there */
 .tile { display: block; height: 100%; padding: 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.75rem; color: var(--ink); text-decoration: none; }
-.tile:hover, .tile:focus-visible { border-color: var(--basil); }
-.tile h2 { font-size: 1.25rem; margin-bottom: 0.35rem; color: var(--basil-dark); }
+.tile:hover, .tile:focus-visible { border-color: var(--primary); }
+.tile h2 { font-size: 1.25rem; margin-bottom: 0.35rem; color: var(--primary-dark); }
 .tile p { color: var(--muted); margin: 0; }
 
 /* Start page: the kitchen ticket shows the product's idea with a real example */
@@ -185,7 +198,7 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--to
   padding: calc(1.25rem + 6px) 1.4rem 1.25rem;
   max-width: 26rem;
   /* the green header strip is an inset shadow, so it never fights the rounded corners */
-  box-shadow: inset 0 6px 0 var(--basil), 0 1px 0 var(--line), 0 12px 24px -18px rgba(43, 38, 33, 0.45);
+  box-shadow: inset 0 6px 0 var(--primary), 0 1px 0 var(--line), 0 12px 24px -18px rgba(13, 24, 33, 0.45);
   transform: rotate(-1.2deg);
 }
 .ticket-dish { font-family: var(--font-display); font-size: 1.35rem; font-weight: 650; margin-bottom: 0.75rem; }
@@ -201,17 +214,19 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--to
 }
 .steps { counter-reset: step; list-style: none; padding: 0; display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
 .steps li { counter-increment: step; }
-.steps li::before { content: counter(step); display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--basil-tint); color: var(--basil-dark); font-weight: 700; margin-bottom: 0.5rem; }
+.steps li::before { content: counter(step); display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--primary-tint); color: var(--primary-dark); font-weight: 700; margin-bottom: 0.5rem; }
 .steps h3 { font-size: 1.15rem; }
 
-/* Footer */
-.site-footer { background: var(--surface); font-size: 0.95rem; color: var(--muted); }
-.site-footer a { color: var(--ink); }
+/* Footer: the darkest brand colour anchors the page */
+.site-footer { background: var(--navy); font-size: 0.95rem; color: #c9d3dd; border-top: 0 !important; }
+.site-footer a { color: var(--sky); }
+.site-footer a:hover { color: #ffffff; }
+.site-footer a:focus-visible { outline-color: var(--sky); }
 .site-footer ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; }
 
 /* Keyboard focus is always visible */
 a:focus-visible, button:focus-visible, .btn:focus-visible, input:focus-visible, select:focus-visible {
-  outline: 3px solid var(--basil);
+  outline: 3px solid var(--primary);
   outline-offset: 2px;
 }
 
