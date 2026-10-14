@@ -1,0 +1,33 @@
+# Starts AllergenTrace with its own PostgreSQL database: `docker compose up --build`
+# The app is then available at http://localhost:8000
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: allergentrace
+      POSTGRES_PASSWORD: allergentrace
+      POSTGRES_DB: allergentrace
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U allergentrace"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgres://allergentrace:allergentrace@db:5432/allergentrace
+      # Local use only; the cloud deployment uses its own secret key.
+      DJANGO_SECRET_KEY: local-docker-compose-key-not-for-production
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      DJANGO_SECURE_SSL_REDIRECT: "False"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
