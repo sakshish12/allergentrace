@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row">
+  <div class="col-md-8 col-lg-5">
+    <h1 class="h3 mb-2">{% translate "Register your business" %}</h1>
+    <p class="text-body-secondary mb-4">{% translate "You become the owner of the account and can add your staff afterwards." %}</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {% for field in form %}<div class="mb-3">{{ field.as_field_group }}</div>{% endfor %}
+      <button class="btn btn-primary" type="submit">{% translate "Create account" %}</button>
+    </form>
+    <p class="mt-4 small">{% translate "Already registered?" %} <a href="{% url 'login' %}">{% translate "Log in" %}</a></p>
+  </div>
+</div>
+{% endblock %}

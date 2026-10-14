@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row">
+  <div class="col-md-8 col-lg-5">
+    <h1 class="h3 mb-4">{% translate "Log in" %}</h1>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if form.errors %}
+      <div class="alert alert-danger" role="alert">{% translate "E-mail or password is not correct." %}</div>
+      {% endif %}
+      <div class="mb-3">
+        <label class="form-label" for="id_username">{% translate "E-mail" %}</label>
+        <input class="form-control" type="email" name="username" id="id_username" autocomplete="username"
+               value="{{ form.username.value|default:'' }}" required autofocus>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="id_password">{% translate "Password" %}</label>
+        <input class="form-control" type="password" name="password" id="id_password" autocomplete="current-password" required>
+      </div>
+      <input type="hidden" name="next" value="{{ next }}">
+      <button class="btn btn-primary" type="submit">{% translate "Log in" %}</button>
+    </form>
+    <p class="mt-4 small">{% translate "New here?" %} <a href="{% url 'signup' %}">{% translate "Register your business" %}</a></p>
+  </div>
+</div>
+{% endblock %}

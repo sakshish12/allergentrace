@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">{% translate "Ingredients" %}</h1>
+  {% if user.membership.can_edit %}<a class="btn btn-primary" href="{% url 'ingredient_create' %}">{% translate "New ingredient" %}</a>{% endif %}
+</div>
+{% if object_list %}
+<div class="table-responsive">
+<table class="table align-middle">
+  <thead><tr>
+    <th>{% translate "Ingredient" %}</th><th>{% translate "Contains" %}</th><th>{% translate "May contain" %}</th>
+    <th>{% translate "Data" %}</th><th></th>
+  </tr></thead>
+  <tbody>
+  {% for ingredient in object_list %}
+    <tr>
+      <td>
+        <div class="fw-medium">{{ ingredient.name }}</div>
+        <div class="small text-body-secondary">{{ ingredient.product_name }}{% if ingredient.supplier %}{% if ingredient.product_name %} · {% endif %}{{ ingredient.supplier }}{% endif %}</div>
+      </td>
+      <td>{{ ingredient.contains_labels|join:", "|default:"–" }}</td>
+      <td>{{ ingredient.may_contain_labels|join:", "|default:"–" }}</td>
+      <td class="text-nowrap">
+        {% if ingredient.status == "complete" %}
+        <span class="badge text-bg-success">{% translate "Checked" %}</span>
+        <div class="small text-body-secondary">{{ ingredient.verified_on|date:"SHORT_DATE_FORMAT" }}</div>
+        {% else %}
+        <span class="badge text-bg-warning">{% translate "Unknown" %}</span>
+        {% endif %}
+      </td>
+      <td class="text-end text-nowrap">{% if user.membership.can_edit %}
+        <a href="{% url 'ingredient_update' ingredient.pk %}">{% translate "Edit" %}</a> ·
+        <a class="link-danger" href="{% url 'ingredient_delete' ingredient.pk %}">{% translate "Delete" %}</a>{% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p class="text-body-secondary">{% translate "No ingredients yet." %}</p>
+{% endif %}
+{% endblock %}

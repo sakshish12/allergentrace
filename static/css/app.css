@@ -1,0 +1,18 @@
+/* Small additions to Bootstrap. Django renders form errors as <ul class="errorlist">. */
+.errorlist {
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0 0;
+  color: var(--bs-danger-text-emphasis);
+  font-size: 0.875rem;
+}
+
+/* Bootstrap's default checkbox border is too light for WCAG 2.2 non-text contrast (3:1). */
+.form-check-input:not(:checked) {
+  border-color: var(--bs-secondary-color);
+}
+
+.allergen-table td,
+.allergen-table th {
+  vertical-align: middle;
+}

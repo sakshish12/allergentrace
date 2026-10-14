@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<h1 class="h3 mb-1">{{ request.business }}</h1>
+<p class="text-body-secondary mb-4">{% blocktranslate with role=user.membership.get_role_display %}You are logged in as {{ role }}.{% endblocktranslate %}</p>
+<div class="row g-3">
+  <div class="col-md-4">
+    <a class="card h-100 text-decoration-none" href="{% url 'ingredient_list' %}">
+      <div class="card-body">
+        <h2 class="h5 card-title">{% translate "Ingredients" %}</h2>
+        <p class="card-text text-body-secondary">{% translate "Enter allergens once per ingredient." %}</p>
+      </div>
+    </a>
+  </div>
+  <div class="col-md-4">
+    <a class="card h-100 text-decoration-none" href="{% url 'supplier_list' %}">
+      <div class="card-body">
+        <h2 class="h5 card-title">{% translate "Suppliers" %}</h2>
+        <p class="card-text text-body-secondary">{% translate "Where your ingredients come from." %}</p>
+      </div>
+    </a>
+  </div>
+  {% if user.membership.is_owner %}
+  <div class="col-md-4">
+    <a class="card h-100 text-decoration-none" href="{% url 'staff_list' %}">
+      <div class="card-body">
+        <h2 class="h5 card-title">{% translate "Staff" %}</h2>
+        <p class="card-text text-body-secondary">{% translate "Accounts for your kitchen and service team." %}</p>
+      </div>
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

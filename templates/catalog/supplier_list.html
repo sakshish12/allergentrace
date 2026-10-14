@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">{% translate "Suppliers" %}</h1>
+  {% if user.membership.can_edit %}<a class="btn btn-primary" href="{% url 'supplier_create' %}">{% translate "New supplier" %}</a>{% endif %}
+</div>
+{% if object_list %}
+<div class="table-responsive">
+<table class="table align-middle">
+  <thead><tr><th>{% translate "Name" %}</th><th>{% translate "Contact" %}</th><th></th></tr></thead>
+  <tbody>
+  {% for supplier in object_list %}
+    <tr>
+      <td>{{ supplier.name }}</td>
+      <td>{{ supplier.contact }}</td>
+      <td class="text-end text-nowrap">{% if user.membership.can_edit %}
+        <a href="{% url 'supplier_update' supplier.pk %}">{% translate "Edit" %}</a> ·
+        <a class="link-danger" href="{% url 'supplier_delete' supplier.pk %}">{% translate "Delete" %}</a>{% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p class="text-body-secondary">{% translate "No suppliers yet." %}</p>
+{% endif %}
+{% endblock %}

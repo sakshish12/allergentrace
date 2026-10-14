@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<h1 class="h3 mb-3">{% blocktranslate %}Delete “{{ object }}”?{% endblocktranslate %}</h1>
+<p>{% translate "This cannot be undone." %}</p>
+<form method="post">
+  {% csrf_token %}
+  <button class="btn btn-danger" type="submit">{% translate "Delete" %}</button>
+  <a class="btn btn-link" href="javascript:history.back()">{% translate "Cancel" %}</a>
+</form>
+{% endblock %}

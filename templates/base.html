@@ -4,16 +4,44 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}AllergenTrace{% endblock %}</title>
+  <title>{% block title %}{% if title %}{{ title }} – {% endif %}AllergenTrace{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
 <body class="d-flex flex-column min-vh-100">
-  <header class="navbar border-bottom">
+  <nav class="navbar navbar-expand-md border-bottom">
     <div class="container">
-      <a class="navbar-brand fw-semibold" href="{% url 'home' %}">AllergenTrace</a>
+      <a class="navbar-brand fw-semibold" href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'home' %}{% endif %}">AllergenTrace</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainnav"
+              aria-controls="mainnav" aria-expanded="false" aria-label="{% translate 'Menu' %}">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainnav">
+        {% if user.is_authenticated and user.membership %}
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="{% url 'ingredient_list' %}">{% translate "Ingredients" %}</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'supplier_list' %}">{% translate "Suppliers" %}</a></li>
+          {% if user.membership.is_owner %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'staff_list' %}">{% translate "Staff" %}</a></li>
+          {% endif %}
+        </ul>
+        <span class="navbar-text small me-3">{{ user.membership.business }} · {{ user.membership.get_role_display }}</span>
+        <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+          <button class="btn btn-outline-secondary btn-sm" type="submit">{% translate "Log out" %}</button>
+        </form>
+        {% elif not user.is_authenticated %}
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">{% translate "Log in" %}</a></li>
+          <li class="nav-item"><a class="btn btn-primary btn-sm ms-md-2" href="{% url 'signup' %}">{% translate "Register your business" %}</a></li>
+        </ul>
+        {% endif %}
+      </div>
     </div>
-  </header>
+  </nav>
   <main class="container py-4 flex-grow-1">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}" role="status">{{ message }}</div>
+    {% endfor %}
     {% block content %}{% endblock %}
   </main>
   <footer class="border-top py-3 small text-body-secondary">
