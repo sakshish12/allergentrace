@@ -11,4 +11,5 @@ urlpatterns = [
     path("ingredients/new/", views.IngredientCreateView.as_view(), name="ingredient_create"),
     path("ingredients/<int:pk>/edit/", views.IngredientUpdateView.as_view(), name="ingredient_update"),
     path("ingredients/<int:pk>/delete/", views.IngredientDeleteView.as_view(), name="ingredient_delete"),
+    path("example-data/", views.ExampleDataView.as_view(), name="example_data"),
 ]

@@ -34,4 +34,20 @@
   </div>
   {% endif %}
 </div>
+
+<section class="mt-5 measure" aria-labelledby="start">
+  <h2 id="start" class="h4">{% translate "How to get started" %}</h2>
+  <ol class="ps-3">
+    <li class="mb-2">{% translate "Add the suppliers you buy from, so you know whom to ask about missing allergen data." %}</li>
+    <li class="mb-2">{% translate "Add each ingredient once and tick the allergens from its label. Tick “I have checked …” when you have compared it with the label; otherwise it stays “Unknown”." %}</li>
+    <li>{% translate "Next, you will combine ingredients into recipes and dishes. Their allergens are then calculated for you." %}</li>
+  </ol>
+  {% if user.membership.is_owner %}
+  <form method="post" action="{% url 'example_data' %}" class="mt-3">
+    {% csrf_token %}
+    <p class="text-body-secondary mb-2">{% translate "Want to see how it looks first? Load example suppliers and ingredients of a small café. Entries you already have are not changed." %}</p>
+    <button class="btn btn-outline-secondary" type="submit">{% translate "Load example data" %}</button>
+  </form>
+  {% endif %}
+</section>
 {% endblock %}
