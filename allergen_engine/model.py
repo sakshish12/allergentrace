@@ -133,3 +133,10 @@ class Summary:
         if allergen in self.may_contain:
             return Status.MAY_CONTAIN
         return Status.ASK_STAFF if self.ask_staff else Status.FREE
+
+    def hidden_for(self, avoid: frozenset[Allergen], show_may_contain: bool = False) -> bool:
+        """US-15: the guest filter. Traces only hide a dish while the guest has not asked to see them.
+
+        'Please ask staff' never hides a dish; the menu shows it with a warning instead.
+        """
+        return bool(self.contains & avoid) or (not show_may_contain and bool(self.may_contain & avoid))

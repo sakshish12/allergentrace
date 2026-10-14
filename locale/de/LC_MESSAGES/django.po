@@ -1,0 +1,74 @@
+# German translation of the public guest menu (US-14). The back office is English only.
+msgid ""
+msgstr ""
+"Project-Id-Version: AllergenTrace\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Allergens – %(name)s"
+msgstr "Allergene – %(name)s"
+
+msgid "Menu of %(name)s with the 14 main allergens of every dish."
+msgstr "Speisekarte von %(name)s mit den 14 Hauptallergenen jedes Gerichts."
+
+msgid "Skip to the dishes"
+msgstr "Direkt zu den Gerichten"
+
+msgid "Menu with allergens"
+msgstr "Speisekarte mit Allergenen"
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "Hide dishes with my allergens"
+msgstr "Gerichte mit meinen Allergenen ausblenden"
+
+msgid "I avoid:"
+msgstr "Ich vertrage nicht:"
+
+msgid "Also show dishes that may contain traces"
+msgstr "Auch Gerichte zeigen, die Spuren enthalten können"
+
+msgid "Show dishes"
+msgstr "Gerichte anzeigen"
+
+msgid "Reset filter"
+msgstr "Filter zurücksetzen"
+
+msgid "%(counter)s dish is hidden because of your allergens."
+msgid_plural "%(counter)s dishes are hidden because of your allergens."
+msgstr[0] "%(counter)s Gericht ist wegen Ihrer Allergene ausgeblendet."
+msgstr[1] "%(counter)s Gerichte sind wegen Ihrer Allergene ausgeblendet."
+
+msgid "Allergens"
+msgstr "Allergene"
+
+msgid "may contain %(label)s"
+msgstr "kann Spuren enthalten: %(label)s"
+
+msgid "None of the 14 main allergens"
+msgstr "Keines der 14 Hauptallergene"
+
+msgid "Please ask our staff."
+msgstr "Bitte fragen Sie unser Personal."
+
+msgid "Not all ingredients of this dish are checked yet, so it may contain one of your allergens."
+msgstr "Noch nicht alle Zutaten dieses Gerichts sind geprüft, es kann also eines Ihrer Allergene enthalten."
+
+msgid "Not all ingredients of this dish are checked yet."
+msgstr "Noch nicht alle Zutaten dieses Gerichts sind geprüft."
+
+msgid "No dish fits your selection. Please ask our staff."
+msgstr "Kein Gericht passt zu Ihrer Auswahl. Bitte fragen Sie unser Personal."
+
+msgid "The menu is empty at the moment."
+msgstr "Die Speisekarte ist im Moment leer."
+
+msgid "The 14 main allergens according to Regulation (EU) No 1169/2011. Recipes can change: if you have a severe allergy, please always tell our staff."
+msgstr "Die 14 Hauptallergene nach Verordnung (EU) Nr. 1169/2011. Rezepte können sich ändern: Bei einer schweren Allergie sagen Sie bitte immer unserem Personal Bescheid."
+
+msgid "Information provided by %(name)s with AllergenTrace."
+msgstr "Angaben von %(name)s, erstellt mit AllergenTrace."

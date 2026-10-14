@@ -36,6 +36,10 @@ python manage.py runserver
 
 All configuration variables are listed in [`.env.example`](.env.example).
 
+The PDF allergen list uses WeasyPrint, which needs the Pango library of the operating system ([installation notes](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html)); the Docker image already contains it.
+
+The guest menu is available in German and English. The German texts are in `locale/de/LC_MESSAGES/django.po`; after changing them, compile the file with `python manage.py compilemessages` (needs GNU gettext). The compiled `.mo` file is committed, so the app runs without gettext.
+
 ## Tests and code quality
 
 ```bash
@@ -58,4 +62,4 @@ The sprint plan is visible as [milestones](https://github.com/sakshish12/allerge
 
 ## Third-party software
 
-Django, psycopg, dj-database-url, Gunicorn and WhiteNoise (see `requirements.txt`), and Bootstrap 5.3 (MIT licence, bundled in `static/vendor/bootstrap`).
+Django, psycopg, dj-database-url, Gunicorn, WhiteNoise, django-simple-history, WeasyPrint and segno (see `requirements.txt`), and Bootstrap 5.3 (MIT licence, bundled in `static/vendor/bootstrap`).

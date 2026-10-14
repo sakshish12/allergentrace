@@ -10,5 +10,6 @@ urlpatterns = [
     path("app/", include("catalog.urls")),
     path("app/", include("recipes.urls")),
     path("app/", include("publication.urls")),
+    path("m/", include("publication.guest_urls")),
     path("admin/", admin.site.urls),
 ]

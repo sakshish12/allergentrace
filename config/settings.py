@@ -48,7 +48,6 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -96,9 +95,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = "en"
-# German is switched on in Sprint 4 together with the German translations (US-14); until
-# then Django's own German strings would mix with English ones.
-LANGUAGES = [("en", "English")]
+# The back office is English. Only the guest menu is bilingual (US-14): its URL carries the
+# language, so there is no LocaleMiddleware and Django's own German strings never mix in.
+LANGUAGES = [("de", "Deutsch"), ("en", "English")]
 LOCALE_PATHS = [BASE_DIR / "locale"]
 TIME_ZONE = "Europe/Berlin"
 USE_I18N = True

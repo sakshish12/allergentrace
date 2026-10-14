@@ -243,3 +243,27 @@ body { overflow-wrap: anywhere; }
 
 /* Counter in the navigation, e.g. approvals waiting */
 .badge-count { background: var(--caution); color: var(--ink); font-size: 0.75rem; vertical-align: 0.1em; }
+
+/* Menu page in the back office */
+.panel { height: 100%; padding: 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.75rem; }
+.panel h2 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--primary-dark); }
+.qr-panel img { display: block; margin: 0.25rem 0 0.75rem; background: #ffffff; border: 1px solid var(--line); border-radius: 0.4rem; }
+.check-list { display: grid; gap: 0.35rem 1.5rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
+
+/* Guest menu: one narrow column that reads like a printed menu card, also at 360 px */
+.guest-container { max-width: 44rem; }
+.guest-head { background: var(--surface); border-bottom: 1px solid var(--line); box-shadow: inset 0 6px 0 var(--primary); padding: calc(1rem + 6px) 0 1rem; }
+.guest-kicker { font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.lang-switch { display: flex; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
+.lang-switch a { display: inline-block; white-space: nowrap; overflow-wrap: normal; padding: 0.4rem 0.6rem; min-height: 44px; line-height: 1.75; border-radius: 0.4rem; color: var(--ink); text-decoration: none; }
+.lang-switch a[aria-current="page"] { background: var(--primary-tint); color: var(--primary-dark); font-weight: 700; }
+.guest-filter { background: var(--surface); border: 1px solid var(--line); border-radius: 0.75rem; padding: 0.9rem 1.1rem; }
+.guest-filter summary { font-weight: 700; cursor: pointer; min-height: 28px; }
+.allergen-grid { display: grid; gap: 0.4rem 1rem; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); }
+.guest .form-check-input { width: 1.2rem; height: 1.2rem; margin-top: 0.2rem; }
+.guest-status:empty { display: none; }
+.guest-status { color: var(--muted); }
+.guest-dishes { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem; }
+.guest-dish { background: var(--surface); border: 1px solid var(--line); border-radius: 0.75rem; padding: 1rem 1.1rem; }
+.ask-staff { padding: 0.45rem 0.7rem; border-radius: 0.4rem; background: var(--caution-tint); font-size: 0.95rem; }
+.ask-staff-strong { box-shadow: inset 0 0 0 2px var(--caution); }

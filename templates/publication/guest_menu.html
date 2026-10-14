@@ -1,0 +1,93 @@
+{% load static i18n %}<!doctype html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% blocktranslate with name=menu.business.name %}Allergens – {{ name }}{% endblocktranslate %}</title>
+  <meta name="description" content="{% blocktranslate with name=menu.business.name %}Menu of {{ name }} with the 14 main allergens of every dish.{% endblocktranslate %}">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#344966">
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body class="d-flex flex-column min-vh-100 guest">
+  <a class="visually-hidden-focusable btn btn-primary position-absolute m-2" href="#dishes">{% translate "Skip to the dishes" %}</a>
+  <header class="guest-head">
+    <div class="container guest-container d-flex justify-content-between align-items-start gap-3">
+      <div>
+        <p class="guest-kicker mb-1">{% translate "Menu with allergens" %}</p>
+        <h1 class="h3 mb-0">{{ menu.business.name }}</h1>
+      </div>
+      <nav aria-label="{% translate 'Language' %}">
+        <ul class="lang-switch">
+          <li><a href="{% url 'guest_menu_lang' menu.qr_token 'de' %}{% if query %}?{{ query }}{% endif %}" lang="de" hreflang="de"{% if lang == 'de' %} aria-current="page"{% endif %}>Deutsch</a></li>
+          <li><a href="{% url 'guest_menu_lang' menu.qr_token 'en' %}{% if query %}?{{ query }}{% endif %}" lang="en" hreflang="en"{% if lang == 'en' %} aria-current="page"{% endif %}>English</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container guest-container py-4 flex-grow-1">
+    <details class="guest-filter mb-4"{% if avoid %} open{% endif %}>
+      <summary>{% translate "Hide dishes with my allergens" %}{% if avoid %} ({{ avoid|length }}){% endif %}</summary>
+      <form method="get" class="pt-3">
+        <fieldset>
+          <legend class="form-text mt-0 mb-2">{% translate "I avoid:" %}</legend>
+          <div class="allergen-grid">
+            {% for code, label in allergens %}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="avoid" value="{{ code }}" id="avoid-{{ code }}"{% if code in avoid %} checked{% endif %}>
+              <label class="form-check-label" for="avoid-{{ code }}">{{ label }}</label>
+            </div>
+            {% endfor %}
+          </div>
+        </fieldset>
+        <div class="form-check mt-3">
+          <input class="form-check-input" type="checkbox" name="traces" value="1" id="traces"{% if show_traces %} checked{% endif %}>
+          <label class="form-check-label" for="traces">{% translate "Also show dishes that may contain traces" %}</label>
+        </div>
+        <div class="d-flex flex-wrap gap-3 align-items-center mt-3">
+          <button class="btn btn-primary" type="submit">{% translate "Show dishes" %}</button>
+          {% if avoid or show_traces %}<a href="{% url 'guest_menu_lang' menu.qr_token lang %}">{% translate "Reset filter" %}</a>{% endif %}
+        </div>
+      </form>
+    </details>
+
+    <p class="guest-status" role="status">
+      {% if hidden %}{% blocktranslate count counter=hidden %}{{ counter }} dish is hidden because of your allergens.{% plural %}{{ counter }} dishes are hidden because of your allergens.{% endblocktranslate %}{% endif %}
+    </p>
+
+    <ul class="guest-dishes" id="dishes">
+      {% for dish in dishes %}
+      <li class="guest-dish">
+        <h2 class="h5 mb-2">{{ dish.name }}</h2>
+        {% if dish.contains or dish.traces %}
+        <ul class="chips" aria-label="{% translate 'Allergens' %}">
+          {% for label in dish.contains %}<li class="chip">{{ label }}</li>{% endfor %}
+          {% for label in dish.traces %}<li class="chip chip-trace">{% blocktranslate %}may contain {{ label }}{% endblocktranslate %}</li>{% endfor %}
+        </ul>
+        {% elif not dish.ask_staff %}
+        <p class="mb-0 text-body-secondary">{% translate "None of the 14 main allergens" %}</p>
+        {% endif %}
+        {% if dish.ask_staff %}
+        <p class="ask-staff{% if avoid %} ask-staff-strong{% endif %} mb-0 mt-2">
+          <strong>{% translate "Please ask our staff." %}</strong>
+          {% if avoid %}{% translate "Not all ingredients of this dish are checked yet, so it may contain one of your allergens." %}{% else %}{% translate "Not all ingredients of this dish are checked yet." %}{% endif %}
+        </p>
+        {% endif %}
+      </li>
+      {% empty %}
+      <li class="guest-dish">{% if hidden %}{% translate "No dish fits your selection. Please ask our staff." %}{% else %}{% translate "The menu is empty at the moment." %}{% endif %}</li>
+      {% endfor %}
+    </ul>
+  </main>
+
+  <footer class="site-footer py-4">
+    <div class="container guest-container">
+      <p class="mb-1">{% translate "The 14 main allergens according to Regulation (EU) No 1169/2011. Recipes can change: if you have a severe allergy, please always tell our staff." %}</p>
+      <p class="mb-0">{% blocktranslate with name=menu.business.name %}Information provided by {{ name }} with AllergenTrace.{% endblocktranslate %}</p>
+    </div>
+  </footer>
+</body>
+</html>

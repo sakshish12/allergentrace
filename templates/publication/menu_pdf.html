@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Allergenliste / Allergen list – {{ business.name }}</title>
+<style>
+  @font-face { font-family: "Atkinson Hyperlegible"; font-weight: 400; src: url("vendor/fonts/atkinson-hyperlegible-latin-400-normal.woff2"); }
+  @font-face { font-family: "Atkinson Hyperlegible"; font-weight: 700; src: url("vendor/fonts/atkinson-hyperlegible-latin-700-normal.woff2"); }
+  @page {
+    size: A4 landscape;
+    margin: 14mm 12mm 16mm;
+    @bottom-left { content: "Erstellt am / created on {{ today|date:'d.m.Y' }}"; font: 8pt "Atkinson Hyperlegible"; color: #4a5a70; }
+    @bottom-right { content: "Seite / page " counter(page) " / " counter(pages); font: 8pt "Atkinson Hyperlegible"; color: #4a5a70; }
+  }
+  body { font-family: "Atkinson Hyperlegible", sans-serif; font-size: 9pt; color: #0d1821; }
+  h1 { font-size: 16pt; margin: 0 0 1mm; }
+  .sub { margin: 0 0 5mm; color: #4a5a70; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { border: 0.4pt solid #b9c4cf; padding: 1.6mm 1mm; text-align: center; }
+  thead th { background: #e2ecf8; font-size: 8pt; }
+  thead { display: table-header-group; }
+  tr { page-break-inside: avoid; }
+  th.dish, td.dish { text-align: left; width: 62mm; }
+  td.dish small { display: block; color: #7a4d00; font-size: 7.5pt; }
+  .legend { margin-top: 6mm; display: flex; gap: 10mm; font-size: 8pt; }
+  .legend ol { margin: 0; padding-left: 5mm; columns: 2; column-gap: 8mm; }
+  .legend p { margin: 0 0 1mm; }
+</style>
+</head>
+<body>
+<h1>Allergenliste / Allergen list – {{ business.name }}</h1>
+<p class="sub">Kennzeichnung der 14 Hauptallergene nach Verordnung (EU) Nr. 1169/2011 und LMIDV · Labelling of the 14 main allergens according to Regulation (EU) No 1169/2011</p>
+<table>
+  <thead>
+    <tr>
+      <th class="dish">Gericht / Dish</th>
+      {% for allergen in allergens %}<th title="{{ allergen.label_de }}">{{ forloop.counter }}</th>{% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for dish, summary, ranks in rows %}
+    <tr>
+      <td class="dish">{{ dish.name }}{% if summary.ask_staff %}<small>Nicht alle Zutaten geprüft – bitte beim Personal nachfragen / Not all ingredients checked – please ask staff</small>{% endif %}</td>
+      {% for rank in ranks %}<td>{% if rank == 2 %}X{% elif rank == 1 %}(X){% endif %}</td>{% endfor %}
+    </tr>
+    {% empty %}
+    <tr><td class="dish" colspan="15">Keine Gerichte auf der Speisekarte / No dishes on the menu</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div class="legend">
+  <div>
+    <p><strong>X</strong> enthalten / contains</p>
+    <p><strong>(X)</strong> kann Spuren enthalten / may contain traces</p>
+  </div>
+  <ol>
+    {% for allergen in allergens %}<li>{{ allergen.label_de }} / {{ allergen.label_en }}</li>{% endfor %}
+  </ol>
+</div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Menu" %} – AllergenTrace{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1 class="h2">{% translate "Menu for guests" %}</h1>
+  <a class="btn btn-outline-secondary" href="{% url 'menu_pdf' %}">{% translate "Download allergen list (PDF)" %}</a>
+</div>
+<p class="measure text-body-secondary">{% translate "Guests open the menu with the QR code on their own phone, in German or English, and can hide dishes with their allergens. They only ever see approved declarations." %}</p>
+
+<div class="row g-4 mb-5">
+  <div class="col-md-7">
+    <section class="panel" aria-labelledby="link-heading">
+      <h2 id="link-heading">{% translate "Public link" %}</h2>
+      <p class="mb-2"><a class="fw-bold" href="{{ guest_url }}">{{ guest_url }}</a></p>
+      <p class="mb-0">{% translate "Anyone with this link can see the menu. It does not show recipes, suppliers or anything that waits for approval." %}</p>
+    </section>
+  </div>
+  <div class="col-md-5">
+    <section class="panel qr-panel" aria-labelledby="qr-heading">
+      <h2 id="qr-heading">{% translate "QR code for the tables" %}</h2>
+      <img src="{% url 'menu_qr' 'svg' %}" width="160" height="160" alt="{% translate 'QR code that opens the public menu' %}">
+      <p class="mb-0 d-flex flex-wrap gap-3">
+        <a href="{% url 'menu_qr' 'png' %}" download>{% translate "Download PNG" %}</a>
+        <a href="{% url 'menu_qr' 'svg' %}" download>{% translate "Download SVG" %}</a>
+      </p>
+    </section>
+  </div>
+</div>
+
+<h2 class="h4">{% translate "Dishes on the menu" %}</h2>
+{% if not dishes %}
+<p class="measure">{% translate "There are no dishes yet." %} <a href="{% url 'recipe_create' %}">{% translate "Add a recipe" %}</a></p>
+{% elif user.membership.is_owner %}
+<form method="post" class="measure">{% csrf_token %}
+  <fieldset>
+    <legend class="form-text mt-0 mb-2">{% translate "Untick dishes you do not serve at the moment." %}</legend>
+    <ul class="list-unstyled check-list">
+      {% for dish in dishes %}
+      <li class="form-check">
+        <input class="form-check-input" type="checkbox" name="dishes" value="{{ dish.pk }}" id="dish-{{ dish.pk }}"{% if dish.pk in on_menu %} checked{% endif %}>
+        <label class="form-check-label" for="dish-{{ dish.pk }}">{{ dish.name }}</label>
+      </li>
+      {% endfor %}
+    </ul>
+  </fieldset>
+  <button class="btn btn-primary" type="submit">{% translate "Save menu" %}</button>
+</form>
+{% else %}
+<ul class="measure">
+  {% for dish in dishes %}{% if dish.pk in on_menu %}<li>{{ dish.name }}</li>{% endif %}{% endfor %}
+</ul>
+<p class="text-body-secondary">{% translate "Only the owner can change which dishes are on the menu." %}</p>
+{% endif %}
+{% endblock %}

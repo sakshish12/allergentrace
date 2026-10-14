@@ -27,6 +27,8 @@ jobs:
         with:
           python-version: "3.13"
           cache: pip
+      - name: System libraries for the PDF export (WeasyPrint)
+        run: sudo apt-get update && sudo apt-get install -y libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0
       - run: pip install -r requirements-dev.txt
       - name: Generate a throwaway secret key
         run: echo "DJANGO_SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(50))')" >> "$GITHUB_ENV"

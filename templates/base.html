@@ -33,6 +33,7 @@
           {% include "_nav_item.html" with name="ingredient_list" match="ingredient" label=_("Ingredients") %}
           {% include "_nav_item.html" with name="equipment_list" match="equipment" label=_("Equipment") %}
           {% include "_nav_item.html" with name="supplier_list" match="supplier" label=_("Suppliers") %}
+          {% include "_nav_item.html" with name="menu" match="menu" label=_("Menu") %}
           <li class="nav-item">
             <a class="nav-link{% if 'approv' in url_name %} active{% endif %}"{% if 'approv' in url_name %} aria-current="page"{% endif %} href="{% url 'approvals' %}">
               {% translate "Approvals" %}{% if pending_count %} <span class="badge rounded-pill badge-count">{{ pending_count }}<span class="visually-hidden"> {% translate "waiting" %}</span></span>{% endif %}
