@@ -17,7 +17,7 @@
 <body class="d-flex flex-column min-vh-100">
   <a class="visually-hidden-focusable btn btn-primary position-absolute m-2" href="#main">{% translate "Skip to content" %}</a>
   {% with url_name=request.resolver_match.url_name %}
-  <nav class="navbar navbar-expand-md border-bottom" aria-label="{% translate 'Main' %}">
+  <nav class="navbar navbar-expand-lg border-bottom" aria-label="{% translate 'Main' %}">
     <div class="container">
       <a class="navbar-brand" href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'home' %}{% endif %}">
         <img src="{% static 'img/favicon.svg' %}" width="30" height="30" alt=""> AllergenTrace
@@ -29,15 +29,22 @@
       <div class="collapse navbar-collapse" id="mainnav">
         {% if user.is_authenticated and user.membership %}
         <ul class="navbar-nav me-auto">
-          <li class="nav-item"><a class="nav-link{% if 'recipe' in url_name %} active{% endif %}" {% if 'recipe' in url_name %}aria-current="page"{% endif %} href="{% url 'recipe_list' %}">{% translate "Recipes" %}</a></li>
-          <li class="nav-item"><a class="nav-link{% if 'ingredient' in url_name %} active{% endif %}" {% if 'ingredient' in url_name %}aria-current="page"{% endif %} href="{% url 'ingredient_list' %}">{% translate "Ingredients" %}</a></li>
-          <li class="nav-item"><a class="nav-link{% if 'supplier' in url_name %} active{% endif %}" {% if 'supplier' in url_name %}aria-current="page"{% endif %} href="{% url 'supplier_list' %}">{% translate "Suppliers" %}</a></li>
+          {% include "_nav_item.html" with name="recipe_list" match="recipe" label=_("Recipes") %}
+          {% include "_nav_item.html" with name="ingredient_list" match="ingredient" label=_("Ingredients") %}
+          {% include "_nav_item.html" with name="equipment_list" match="equipment" label=_("Equipment") %}
+          {% include "_nav_item.html" with name="supplier_list" match="supplier" label=_("Suppliers") %}
+          <li class="nav-item">
+            <a class="nav-link{% if 'approv' in url_name %} active{% endif %}"{% if 'approv' in url_name %} aria-current="page"{% endif %} href="{% url 'approvals' %}">
+              {% translate "Approvals" %}{% if pending_count %} <span class="badge rounded-pill badge-count">{{ pending_count }}<span class="visually-hidden"> {% translate "waiting" %}</span></span>{% endif %}
+            </a>
+          </li>
+          {% include "_nav_item.html" with name="history" match="history" label=_("History") %}
           {% if user.membership.is_owner %}
-          <li class="nav-item"><a class="nav-link{% if 'staff' in url_name %} active{% endif %}" {% if 'staff' in url_name %}aria-current="page"{% endif %} href="{% url 'staff_list' %}">{% translate "Staff" %}</a></li>
+          {% include "_nav_item.html" with name="staff_list" match="staff" label=_("Staff") %}
           {% endif %}
         </ul>
-        <div class="d-md-flex align-items-center gap-3 py-2 py-md-0">
-          <div class="nav-context mb-2 mb-md-0">
+        <div class="d-lg-flex align-items-center gap-3 py-2 py-lg-0">
+          <div class="nav-context mb-2 mb-lg-0">
             <div class="fw-bold text-body">{{ user.membership.business }}</div>
             <div>{{ user.membership.get_role_display }}</div>
           </div>
@@ -46,9 +53,9 @@
           </form>
         </div>
         {% elif not user.is_authenticated %}
-        <ul class="navbar-nav ms-auto align-items-md-center gap-md-2">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
           <li class="nav-item"><a class="nav-link{% if url_name == 'login' %} active{% endif %}" href="{% url 'login' %}">{% translate "Log in" %}</a></li>
-          <li class="nav-item"><a class="btn btn-primary btn-sm my-2 my-md-0" href="{% url 'signup' %}">{% translate "Register your business" %}</a></li>
+          <li class="nav-item"><a class="btn btn-primary btn-sm my-2 my-lg-0" href="{% url 'signup' %}">{% translate "Register your business" %}</a></li>
         </ul>
         {% endif %}
       </div>
@@ -64,6 +71,7 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% translate 'Close message' %}"></button>
     </div>
     {% endfor %}
+    {% if impact %}{% include "publication/_impact.html" %}{% endif %}
     {% block content %}{% endblock %}
   </main>
 

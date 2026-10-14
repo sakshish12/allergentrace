@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     "accounts",
     "catalog",
     "recipes",
+    "publication",
+    "simple_history",
 ]
 
 LOGIN_URL = "login"
@@ -51,6 +53,8 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
+    "publication.middleware.PublicationSyncMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
@@ -66,6 +70,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "publication.context_processors.impact",
+                "publication.context_processors.pending_approvals",
             ],
         },
     },

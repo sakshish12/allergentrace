@@ -240,3 +240,6 @@ body { overflow-wrap: anywhere; }
 /* The declaration on a recipe page uses the ticket look, without the tilt */
 .ticket-flat { transform: none; max-width: none; }
 .ticket-flat:hover { transform: none; }
+
+/* Counter in the navigation, e.g. approvals waiting */
+.badge-count { background: var(--caution); color: var(--ink); font-size: 0.75rem; vertical-align: 0.1em; }

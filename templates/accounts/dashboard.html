@@ -12,6 +12,13 @@
 </div>
 {% endif %}
 
+{% if pending_count %}
+<div class="alert alert-warning measure" role="status">
+  {% blocktranslate count counter=pending_count %}{{ counter }} recipe has an allergen removal waiting for approval. Guests still see the old, safer declaration.{% plural %}{{ counter }} recipes have allergen removals waiting for approval. Guests still see the old, safer declarations.{% endblocktranslate %}
+  <a href="{% url 'approvals' %}">{% if user.membership.is_owner %}{% translate "Review approvals" %}{% else %}{% translate "See what is waiting" %}{% endif %}</a>
+</div>
+{% endif %}
+
 <div class="row g-3">
   <div class="col-md-6 col-lg-3">
     <a class="tile" href="{% url 'recipe_list' %}">
@@ -31,6 +38,12 @@
       <p>{% blocktranslate count counter=supplier_count %}{{ counter }} supplier{% plural %}{{ counter }} suppliers{% endblocktranslate %}</p>
     </a>
   </div>
+  <div class="col-md-6 col-lg-3">
+    <a class="tile" href="{% url 'equipment_list' %}">
+      <h2>{% translate "Equipment" %}</h2>
+      <p>{% blocktranslate count counter=equipment_count %}{{ counter }} piece of equipment{% plural %}{{ counter }} pieces of equipment{% endblocktranslate %}</p>
+    </a>
+  </div>
   {% if user.membership.is_owner %}
   <div class="col-md-6 col-lg-3">
     <a class="tile" href="{% url 'staff_list' %}">
@@ -46,7 +59,8 @@
   <ol class="ps-3">
     <li class="mb-2">{% translate "Add the suppliers you buy from, so you know whom to ask about missing allergen data." %}</li>
     <li class="mb-2">{% translate "Add each ingredient once and tick the allergens from its label. Tick “I have checked …” when you have compared it with the label; otherwise it stays “Unknown”." %}</li>
-    <li>{% translate "Create recipes from ingredients. A sauce or dough can be its own recipe and then be used inside dishes. The allergens of every dish are calculated for you." %}</li>
+    <li class="mb-2">{% translate "Create recipes from ingredients. A sauce or dough can be its own recipe and then be used inside dishes. The allergens of every dish are calculated for you." %}</li>
+    <li>{% translate "Record shared equipment such as a fryer or toaster and tick it on each recipe. Allergens that can pass between recipes are added as “may contain”." %}</li>
   </ol>
   {% if user.membership.is_owner %}
   <form method="post" action="{% url 'example_data' %}" class="mt-3">

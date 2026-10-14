@@ -62,6 +62,29 @@
     </form>
     {% endif %}
 
+    <h2 class="h4 mt-5">{% translate "Equipment" %}</h2>
+    {% if equipment_form %}
+    {% if equipment_form.fields.equipment.queryset %}
+    <form method="post" action="{% url 'recipe_equipment' recipe.pk %}" class="p-3 border rounded-3 bg-white">
+      {% csrf_token %}
+      <fieldset>
+        <legend class="form-label fs-6">{% translate "Prepared with" %}</legend>
+        {% for choice in equipment_form.equipment %}
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}"{% if choice.data.selected %} checked{% endif %}>
+          <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+        </div>
+        {% endfor %}
+      </fieldset>
+      <button class="btn btn-outline-secondary btn-sm mt-2" type="submit">{% translate "Save equipment" %}</button>
+    </form>
+    {% else %}
+    <p class="text-body-secondary">{% translate "No equipment recorded yet." %} <a href="{% url 'equipment_create' %}">{% translate "Add equipment" %}</a></p>
+    {% endif %}
+    {% else %}
+    <p>{% for item in equipment %}{{ item }}{% if not forloop.last %}, {% endif %}{% empty %}<span class="text-body-secondary">{% translate "none recorded" %}</span>{% endfor %}</p>
+    {% endif %}
+
     {% if used_in %}
     <p class="mt-4 mb-0">{% translate "Used in:" %}
       {% for parent in used_in %}<a href="{% url 'recipe_detail' parent.pk %}">{{ parent }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
@@ -94,10 +117,30 @@
           <div class="mb-2"><span class="chip chip-trace">{{ allergen.label_en }}</span>
             <ul class="list-unstyled small text-body-secondary mb-0 mt-1">{% for path in paths %}<li>{% translate "from" %} {{ path|join:" → " }}</li>{% endfor %}</ul>
           </div>
-          {% empty %}<span class="text-body-secondary">{% translate "nothing declared" %}</span>{% endfor %}
+          {% endfor %}
+          {% for allergen, paths in declaration.cross_contact.items %}
+          <div class="mb-2"><span class="chip chip-trace">{{ allergen.label_en }}</span>
+            <ul class="list-unstyled small text-body-secondary mb-0 mt-1">{% for path in paths %}{% with prefix=path|slice:":-2" equipment=path|slice:"-2:-1"|first other=path|last %}
+              <li>{% if prefix %}{% translate "via" %} {{ prefix|join:" → " }}: {% endif %}{% blocktranslate %}shared {{ equipment }}, also used for {{ other }}{% endblocktranslate %}</li>
+            {% endwith %}{% endfor %}</ul>
+          </div>
+          {% endfor %}
+          {% if not declaration.may_contain and not declaration.cross_contact %}<span class="text-body-secondary">{% translate "nothing declared" %}</span>{% endif %}
         </dd>
       </dl>
     </div>
+    {% if publication and publication.has_pending %}
+    <div class="alert alert-warning mt-3" role="status">
+      <strong>{% translate "Waiting for approval." %}</strong>
+      {% blocktranslate with items=publication.pending_labels|join:", " %}Guests still see: {{ items }}. These are no longer calculated and are removed only after the owner approves.{% endblocktranslate %}
+      {% if user.membership.is_owner %}
+      <form method="post" action="{% url 'approve' publication.pk %}" class="mt-2">{% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button class="btn btn-primary btn-sm" type="submit">{% translate "Approve removal" %}</button>
+      </form>
+      {% endif %}
+    </div>
+    {% endif %}
   </section>
 </div>
 {% endblock %}

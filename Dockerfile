@@ -20,4 +20,5 @@ USER appuser
 EXPOSE 8000
 
 # Render passes the port in $PORT; locally the default 8000 is used.
-CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn config.wsgi --bind 0.0.0.0:${PORT:-8000} --workers 2"]
+# populate_history --auto gives existing rows without history a starting snapshot (US-12).
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py populate_history --auto && gunicorn config.wsgi --bind 0.0.0.0:${PORT:-8000} --workers 2"]

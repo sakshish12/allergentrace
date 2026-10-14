@@ -8,8 +8,8 @@ from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from accounts.models import Role
 from accounts.permissions import BusinessFormMixin, BusinessScopedMixin
-from catalog.forms import IngredientForm, SupplierForm
-from catalog.models import Ingredient, Supplier
+from catalog.forms import EquipmentForm, IngredientForm, SupplierForm
+from catalog.models import Equipment, Ingredient, Supplier
 
 
 class SavedMessageMixin:
@@ -102,3 +102,36 @@ class IngredientUpdateView(SavedMessageMixin, BusinessFormMixin, UpdateView):
 class IngredientDeleteView(DeleteConfirmView):
     model = Ingredient
     success_url = reverse_lazy("ingredient_list")
+
+
+# US-05: equipment
+
+
+class EquipmentListView(BusinessScopedMixin, ListView):
+    model = Equipment
+    template_name = "catalog/equipment_list.html"
+
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related("recipes")
+
+
+class EquipmentCreateView(SavedMessageMixin, BusinessFormMixin, CreateView):
+    min_role = Role.KITCHEN
+    model = Equipment
+    form_class = EquipmentForm
+    template_name = "form.html"
+    success_url = reverse_lazy("equipment_list")
+    extra_context = {"title": _("New equipment")}
+
+
+class EquipmentUpdateView(SavedMessageMixin, BusinessFormMixin, UpdateView):
+    min_role = Role.KITCHEN
+    model = Equipment
+    form_class = EquipmentForm
+    template_name = "form.html"
+    success_url = reverse_lazy("equipment_list")
+
+
+class EquipmentDeleteView(DeleteConfirmView):
+    model = Equipment
+    success_url = reverse_lazy("equipment_list")

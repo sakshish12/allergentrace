@@ -8,8 +8,9 @@ from decimal import Decimal
 
 from django.db import transaction
 from django.utils import timezone
+from simple_history.utils import bulk_create_with_history
 
-from catalog.models import Ingredient, Supplier
+from catalog.models import Equipment, Ingredient, Supplier
 from recipes.models import Component, Recipe
 
 SUPPLIERS = [
@@ -115,6 +116,12 @@ RECIPES = [
     ("Oat flat white", True, [("Espresso beans", "i", 18, "g"), ("Oat drink", "i", 120, "ml")]),
 ]
 
+# name, dedicated?, recipes that use it. The shared steam wand froths cow's milk and oat drink.
+EQUIPMENT = [
+    ("Steam wand (espresso machine)", False, ["Cappuccino", "Oat flat white"]),
+    ("Toaster", False, ["Avocado toast", "Hummus plate"]),
+]
+
 
 @transaction.atomic
 def load_example_data(business):
@@ -146,7 +153,7 @@ def load_example_data(business):
         for name, product, supplier, contains, may, checked in INGREDIENTS
         if name not in existing
     ]
-    Ingredient.objects.bulk_create(new)
+    bulk_create_with_history(new, Ingredient)  # with history, so later edits show what changed
 
     ingredients = {i.name: i for i in business.ingredients.all()}
     recipes = {r.name: r for r in business.recipes.all()}
@@ -156,14 +163,24 @@ def load_example_data(business):
             continue
         recipe = recipes[name] = Recipe.objects.create(business=business, name=name, is_dish=is_dish)
         added_recipes += 1
-        Component.objects.bulk_create(
-            Component(
-                recipe=recipe,
-                ingredient=ingredients[part] if kind == "i" else None,
-                sub_recipe=recipes[part] if kind == "r" else None,
-                quantity=Decimal(str(quantity)),
-                unit=unit,
-            )
-            for part, kind, quantity, unit in parts
+        bulk_create_with_history(
+            [
+                Component(
+                    recipe=recipe,
+                    ingredient=ingredients[part] if kind == "i" else None,
+                    sub_recipe=recipes[part] if kind == "r" else None,
+                    quantity=Decimal(str(quantity)),
+                    unit=unit,
+                )
+                for part, kind, quantity, unit in parts
+            ],
+            Component,
         )
+
+    existing_equipment = {e.name: e for e in business.equipment.all()}
+    for name, dedicated, used_by in EQUIPMENT:
+        tool = existing_equipment.get(name) or Equipment.objects.create(
+            business=business, name=name, dedicated=dedicated
+        )
+        tool.recipes.add(*(recipes[r] for r in used_by if r in recipes))
     return len(new), added_recipes

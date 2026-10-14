@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% translate "History" %} – AllergenTrace{% endblock %}
+{% block content %}
+<div class="page-head"><h1 class="h2">{% translate "History" %}</h1></div>
+<p class="measure text-body-secondary">{% translate "Every change to suppliers, ingredients, equipment, recipes and published declarations, with the person and time. Entries cannot be edited." %}</p>
+{% if entries %}
+<table class="data-table">
+  <thead><tr><th scope="col">{% translate "When" %}</th><th scope="col">{% translate "What" %}</th><th scope="col">{% translate "Change" %}</th><th scope="col">{% translate "Who" %}</th></tr></thead>
+  <tbody>
+  {% for e in entries %}
+    <tr>
+      <td class="text-nowrap">{{ e.date|date:"d.m.Y H:i" }}</td>
+      <td data-label="{% translate 'What' %}"><span class="text-body-secondary">{{ e.kind }}</span><div class="fw-bold">{{ e.name }}</div></td>
+      <td data-label="{% translate 'Change' %}">
+        {{ e.action|capfirst }}
+        {% if e.changes %}<ul class="list-unstyled small mb-0 mt-1">{% for c in e.changes %}<li><span class="text-body-secondary">{{ c.field|capfirst }}:</span> {{ c.old }} → {{ c.new }}</li>{% endfor %}</ul>{% endif %}
+      </td>
+      <td data-label="{% translate 'Who' %}">{{ e.user }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="lead measure">{% translate "No changes recorded yet." %}</p>
+{% endif %}
+{% endblock %}

@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from allergen_engine.graph import would_create_cycle
-from catalog.models import Ingredient
+from catalog.models import Equipment, Ingredient
 from config.forms import BootstrapFormMixin
 from recipes.models import Component, Recipe
 from recipes.repository import DjangoRecipeRepository
@@ -62,3 +62,17 @@ class ComponentForm(BootstrapFormMixin, forms.Form):
             quantity=self.cleaned_data["quantity"],
             unit=self.cleaned_data["unit"],
         )
+
+
+class RecipeEquipmentForm(forms.ModelForm):
+    """US-05/US-09: the equipment a recipe is prepared with."""
+
+    class Meta:
+        model = Recipe
+        fields = ["equipment"]
+        widgets = {"equipment": forms.CheckboxSelectMultiple}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["equipment"].queryset = Equipment.objects.filter(business=self.instance.business)
+        self.fields["equipment"].label = _("Prepared with")

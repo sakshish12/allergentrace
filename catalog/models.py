@@ -4,6 +4,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from simple_history.models import HistoricalRecords
 
 from accounts.models import Business
 from allergen_engine.model import Allergen
@@ -17,6 +18,8 @@ class Supplier(models.Model):
     contact_person = models.CharField(_("contact person"), max_length=120, blank=True)
     phone = models.CharField(_("phone"), max_length=40, blank=True)
     email = models.EmailField(_("e-mail"), blank=True)
+
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["name"]
@@ -55,6 +58,8 @@ class Ingredient(models.Model):
     status = models.CharField(_("data status"), max_length=10, choices=Status.choices, default=Status.UNKNOWN)
     verified_on = models.DateField(_("verified on"), null=True, blank=True)
 
+    history = HistoricalRecords()
+
     class Meta:
         ordering = ["name"]
 
@@ -74,3 +79,27 @@ class Ingredient(models.Model):
             raise ValidationError(_("An allergen cannot be both 'contains' and 'may contain': %s") % names)
         if self.supplier_id and self.supplier.business_id != self.business_id:
             raise ValidationError(_("The supplier belongs to another business."))
+
+
+class Equipment(models.Model):
+    """Fryers, grills, slicers … Shared equipment can carry allergens from one recipe to another (BR-3)."""
+
+    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name="equipment")
+    name = models.CharField(_("name"), max_length=120)
+    dedicated = models.BooleanField(
+        _("dedicated to one recipe"),
+        default=False,
+        help_text=_(
+            "Tick only if this equipment is never used for anything else, "
+            "e.g. a separate gluten-free toaster."
+        ),
+    )
+
+    history = HistoricalRecords()
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name_plural = _("equipment")
+
+    def __str__(self):
+        return self.name

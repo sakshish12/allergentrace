@@ -11,7 +11,7 @@ from accounts.models import Role
 from accounts.permissions import BusinessFormMixin, BusinessScopedMixin, MemberRequiredMixin
 from catalog.views import DeleteConfirmView, SavedMessageMixin
 from recipes.example_data import load_example_data
-from recipes.forms import ComponentForm, RecipeForm
+from recipes.forms import ComponentForm, RecipeEquipmentForm, RecipeForm
 from recipes.models import Component, Recipe
 from recipes.repository import declarations_for
 
@@ -48,8 +48,11 @@ class RecipeDetailView(BusinessScopedMixin, DetailView):
             "sub_recipe__name", "ingredient__name"
         )
         context["used_in"] = Recipe.objects.filter(components__sub_recipe=recipe).distinct()
+        context["equipment"] = recipe.equipment.all()
+        context["publication"] = getattr(recipe, "publication", None)
         if self.request.role >= Role.KITCHEN:
             context["component_form"] = component_form or ComponentForm(recipe=recipe)
+            context["equipment_form"] = RecipeEquipmentForm(instance=recipe)
         return context
 
     def post(self, request, pk):
@@ -103,6 +106,21 @@ class ComponentRemoveView(MemberRequiredMixin, View):
         name = str(component)
         component.delete()
         messages.success(request, _("“%(part)s” removed.") % {"part": name})
+        return redirect("recipe_detail", pk=pk)
+
+
+class RecipeEquipmentView(MemberRequiredMixin, View):
+    min_role = Role.KITCHEN
+    http_method_names = ["post"]
+
+    def post(self, request, pk):
+        recipe = get_object_or_404(Recipe, pk=pk, business=request.business)
+        form = RecipeEquipmentForm(request.POST, instance=recipe)
+        if form.is_valid():  # the choices only contain the business's own equipment
+            form.save()
+            messages.success(request, _("Equipment saved."))
+        else:
+            messages.error(request, _("The equipment could not be saved."))
         return redirect("recipe_detail", pk=pk)
 
 

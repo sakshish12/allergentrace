@@ -11,4 +11,8 @@ urlpatterns = [
     path("ingredients/new/", views.IngredientCreateView.as_view(), name="ingredient_create"),
     path("ingredients/<int:pk>/edit/", views.IngredientUpdateView.as_view(), name="ingredient_update"),
     path("ingredients/<int:pk>/delete/", views.IngredientDeleteView.as_view(), name="ingredient_delete"),
+    path("equipment/", views.EquipmentListView.as_view(), name="equipment_list"),
+    path("equipment/new/", views.EquipmentCreateView.as_view(), name="equipment_create"),
+    path("equipment/<int:pk>/edit/", views.EquipmentUpdateView.as_view(), name="equipment_update"),
+    path("equipment/<int:pk>/delete/", views.EquipmentDeleteView.as_view(), name="equipment_delete"),
 ]

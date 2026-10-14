@@ -1,0 +1,18 @@
+{% load i18n %}<section class="impact alert alert-info alert-dismissible fade show" role="status" aria-labelledby="impact-heading">
+  <h2 id="impact-heading" class="h6 mb-2">
+    {% blocktranslate count counter=impact|length %}This change affects {{ counter }} recipe:{% plural %}This change affects {{ counter }} recipes:{% endblocktranslate %}
+  </h2>
+  <ul class="mb-0 ps-3">
+    {% for item in impact %}
+    <li>
+      <a class="fw-bold" href="{% url 'recipe_detail' item.recipe_id %}">{{ item.recipe }}</a>
+      {% if item.added %}<span>{% translate "now declares" %} {{ item.added|join:", " }}{% translate ", published for guests at once." %}</span>{% endif %}
+      {% if item.removed %}<span>{% translate "no longer declares" %} {{ item.removed|join:", " }}{% translate "; guests keep seeing it until the owner approves." %}</span>{% endif %}
+      {% if item.ask_staff_added %}<span>{% translate "now shows “please ask staff”." %}</span>{% endif %}
+      {% if item.ask_staff_removed %}<span>{% translate "no longer needs “please ask staff” once the owner approves." %}</span>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% if user.membership.is_owner and pending_count %}<a class="d-inline-block mt-2" href="{% url 'approvals' %}">{% translate "Review approvals" %}</a>{% endif %}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% translate 'Close' %}"></button>
+</section>

@@ -104,6 +104,11 @@ class Declaration:
     def status(self, allergen: Allergen) -> Status:
         return self.summary().status(allergen)
 
+    @property
+    def traces(self) -> list[Allergen]:
+        """All "may contain" allergens, from ingredients and shared equipment, in Annex II order."""
+        return [a for a in Allergen if a in self.may_contain or a in self.cross_contact]
+
     def summary(self) -> "Summary":
         contains = frozenset(self.contains)
         traces = (frozenset(self.may_contain) | frozenset(self.cross_contact)) - contains

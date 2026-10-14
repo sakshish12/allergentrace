@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Equipment" %} – AllergenTrace{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1 class="h2">{% translate "Equipment" %}</h1>
+  {% if user.membership.can_edit %}<a class="btn btn-primary" href="{% url 'equipment_create' %}">{% translate "New equipment" %}</a>{% endif %}
+</div>
+<p class="measure text-body-secondary">{% translate "When two recipes are made with the same shared equipment, each one may pick up the other's allergens. AllergenTrace adds these as “may contain”. Dedicated equipment is ignored." %}</p>
+{% if object_list %}
+<table class="data-table">
+  <thead><tr><th scope="col">{% translate "Equipment" %}</th><th scope="col">{% translate "Use" %}</th><th scope="col">{% translate "Used for" %}</th>{% if user.membership.can_edit %}<th scope="col"><span class="visually-hidden">{% translate "Actions" %}</span></th>{% endif %}</tr></thead>
+  <tbody>
+  {% for item in object_list %}
+    <tr>
+      <td class="fw-bold">{{ item.name }}</td>
+      <td data-label="{% translate 'Use' %}">{% if item.dedicated %}{% translate "Dedicated" %}{% else %}{% translate "Shared" %}{% endif %}</td>
+      <td data-label="{% translate 'Used for' %}">
+        {% for recipe in item.recipes.all %}<a href="{% url 'recipe_detail' recipe.pk %}">{{ recipe }}</a>{% if not forloop.last %}, {% endif %}{% empty %}<span class="text-body-secondary">{% translate "no recipes yet" %}</span>{% endfor %}
+      </td>
+      {% if user.membership.can_edit %}
+      <td class="row-actions">
+        <a href="{% url 'equipment_update' item.pk %}">{% translate "Edit" %}<span class="visually-hidden"> {{ item.name }}</span></a>
+        <a class="link-danger" href="{% url 'equipment_delete' item.pk %}">{% translate "Delete" %}<span class="visually-hidden"> {{ item.name }}</span></a>
+      </td>
+      {% endif %}
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="measure">
+  <p class="lead">{% translate "No equipment yet. Add fryers, grills, toasters or slicers that are used for more than one recipe." %}</p>
+  {% if user.membership.can_edit %}<a class="btn btn-primary" href="{% url 'equipment_create' %}">{% translate "Add your first equipment" %}</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -4,7 +4,7 @@ from django.urls import reverse
 from accounts.models import Role
 from allergen_engine.model import Allergen, Status
 from catalog.models import Ingredient, Supplier
-from recipes.example_data import INGREDIENTS, RECIPES, SUPPLIERS, load_example_data
+from recipes.example_data import EQUIPMENT, INGREDIENTS, RECIPES, SUPPLIERS, load_example_data
 from recipes.models import Recipe
 from recipes.repository import declarations_for
 
@@ -24,6 +24,8 @@ def test_example_data_is_consistent():
         for part, kind, _qty, _unit in parts:
             assert part in (ingredients if kind == "i" else defined), (name, part)
         defined.add(name)
+    for _name, _dedicated, used_by in EQUIPMENT:
+        assert set(used_by) <= defined
 
 
 def test_owner_loads_example_data_once_without_touching_own_entries(owner_client, owner):
@@ -56,7 +58,12 @@ def test_example_recipes_show_the_rules(owner):
     sandwich = d["Smoked salmon sandwich"]
     assert (("Herb mayo", "Mayonnaise"),) == sandwich.contains[Allergen.EGGS]
     assert d["Cappuccino"].status(Allergen.MILK) is Status.CONTAINS
-    assert d["Oat flat white"].status(Allergen.MILK) is Status.FREE
+    # BR-3: the shared steam wand carries milk into the oat flat white, and gluten the other way
+    assert d["Oat flat white"].status(Allergen.MILK) is Status.MAY_CONTAIN
+    assert d["Oat flat white"].cross_contact[Allergen.MILK] == (
+        ("Steam wand (espresso machine)", "Cappuccino"),
+    )
+    assert d["Cappuccino"].status(Allergen.GLUTEN) is Status.MAY_CONTAIN
 
 
 def test_example_data_only_for_owner_and_only_by_post(client, owner_client, make_member, owner):
@@ -64,3 +71,14 @@ def test_example_data_only_for_owner_and_only_by_post(client, owner_client, make
     client.force_login(make_member(Role.KITCHEN, business=owner.membership.business))
     assert client.post(reverse("example_data")).status_code == 403
     assert not Ingredient.objects.exists()
+
+
+def test_edits_of_example_data_show_their_changes_in_history(owner_client, owner):
+    business = owner.membership.business
+    load_example_data(business)
+    pesto = business.ingredients.get(name="Basil pesto")
+    owner_client.post(
+        reverse("ingredient_update", args=[pesto.pk]),
+        {"name": "Basil pesto", "contains": ["milk"], "may_contain": ["peanuts"], "data_complete": "on"},
+    )
+    assert "Milk, Nuts → Milk" in owner_client.get(reverse("history")).content.decode()

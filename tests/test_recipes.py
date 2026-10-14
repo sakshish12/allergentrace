@@ -136,8 +136,8 @@ def test_other_business_cannot_see_or_use_recipes(client, make_member, kitchen):
     )
 
 
-def test_repository_needs_three_queries(django_assert_num_queries, kitchen):
-    with django_assert_num_queries(3):
+def test_repository_needs_five_queries(django_assert_num_queries, kitchen):
+    with django_assert_num_queries(5):
         DjangoRecipeRepository(kitchen["business"])
 
 

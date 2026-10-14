@@ -1,9 +1,10 @@
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+from simple_history.models import HistoricalRecords
 
 from accounts.models import Business
-from catalog.models import Ingredient
+from catalog.models import Equipment, Ingredient
 
 
 class Recipe(models.Model):
@@ -16,6 +17,11 @@ class Recipe(models.Model):
         default=True,
         help_text=_("Untick for sauces, doughs and other parts that are only used inside dishes."),
     )
+    equipment = models.ManyToManyField(
+        Equipment, blank=True, related_name="recipes", verbose_name=_("equipment")
+    )
+
+    history = HistoricalRecords(m2m_fields=[equipment])
 
     class Meta:
         ordering = ["name"]
@@ -37,6 +43,8 @@ class Component(models.Model):
     )
     quantity = models.DecimalField(_("quantity"), max_digits=8, decimal_places=2, null=True, blank=True)
     unit = models.CharField(_("unit"), max_length=20, blank=True)
+
+    history = HistoricalRecords()
 
     class Meta:
         constraints = [

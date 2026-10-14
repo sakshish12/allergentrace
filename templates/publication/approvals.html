@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Approvals" %} – AllergenTrace{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1 class="h2">{% translate "Approvals" %}</h1>
+  {% if rows and user.membership.is_owner %}
+  <form method="post" action="{% url 'approve_all' %}">{% csrf_token %}
+    <button class="btn btn-primary" type="submit">{% translate "Approve all" %}</button>
+  </form>
+  {% endif %}
+</div>
+<p class="measure text-body-secondary">{% translate "New allergens are shown to guests immediately. An allergen is only removed from what guests see after the owner has approved it, so nobody is told a dish is safer than it is." %}</p>
+
+{% if rows %}
+<table class="data-table">
+  <thead><tr><th scope="col">{% translate "Recipe" %}</th><th scope="col">{% translate "Waiting for removal" %}</th>{% if user.membership.is_owner %}<th scope="col"><span class="visually-hidden">{% translate "Actions" %}</span></th>{% endif %}</tr></thead>
+  <tbody>
+  {% for row in rows %}
+    <tr>
+      <td><a class="fw-bold" href="{% url 'recipe_detail' row.recipe.pk %}">{{ row.recipe }}</a></td>
+      <td data-label="{% translate 'Waiting for removal' %}">
+        <ul class="chips">{% for label in row.pending_labels %}<li class="chip">{{ label }}</li>{% endfor %}</ul>
+      </td>
+      {% if user.membership.is_owner %}
+      <td class="row-actions">
+        <form method="post" action="{% url 'approve' row.pk %}">{% csrf_token %}
+          <button class="btn btn-outline-secondary btn-sm" type="submit">{% translate "Approve" %}<span class="visually-hidden"> {{ row.recipe }}</span></button>
+        </form>
+      </td>
+      {% endif %}
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% if not user.membership.is_owner %}<p class="mt-3 text-body-secondary">{% translate "These changes are waiting for the owner's approval." %}</p>{% endif %}
+{% else %}
+<p class="lead measure">{% translate "Nothing is waiting. Guests see exactly what is calculated." %}</p>
+{% endif %}
+{% endblock %}

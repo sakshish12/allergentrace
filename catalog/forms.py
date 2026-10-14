@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from allergen_engine.model import Allergen
-from catalog.models import ALLERGEN_CHOICES, Ingredient, Supplier
+from catalog.models import ALLERGEN_CHOICES, Equipment, Ingredient, Supplier
 from config.forms import BootstrapFormMixin
 
 
@@ -12,6 +12,15 @@ class SupplierForm(BootstrapFormMixin, forms.ModelForm):
         model = Supplier
         fields = ["name", "contact_person", "phone", "email"]
         widgets = {"phone": forms.TextInput(attrs={"type": "tel", "autocomplete": "tel"})}
+
+    def __init__(self, *args, business, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class EquipmentForm(BootstrapFormMixin, forms.ModelForm):
+    class Meta:
+        model = Equipment
+        fields = ["name", "dedicated"]
 
     def __init__(self, *args, business, **kwargs):
         super().__init__(*args, **kwargs)

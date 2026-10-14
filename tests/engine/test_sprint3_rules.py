@@ -35,6 +35,7 @@ def test_br3_shared_fryer_gives_may_contain_with_reason():
     fries = d[11]
     assert fries.status(A.GLUTEN) is Status.MAY_CONTAIN and fries.status(A.EGGS) is Status.MAY_CONTAIN
     assert fries.cross_contact[A.EGGS] == (("Fryer", "Schnitzel"),)
+    assert fries.traces == [A.GLUTEN, A.EGGS]  # Annex II order
     assert d[10].cross_contact == {}  # fries contain nothing the schnitzel could pick up
 
 

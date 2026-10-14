@@ -13,5 +13,6 @@ urlpatterns = [
         views.ComponentRemoveView.as_view(),
         name="component_remove",
     ),
+    path("recipes/<int:pk>/equipment/", views.RecipeEquipmentView.as_view(), name="recipe_equipment"),
     path("example-data/", views.ExampleDataView.as_view(), name="example_data"),
 ]

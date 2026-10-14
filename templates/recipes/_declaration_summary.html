@@ -1,8 +1,8 @@
 {% load i18n %}{# Compact declaration: chips for "contains", dashed chips for "may contain", warning if data is unknown #}
-{% if declaration.contains or declaration.may_contain %}
+{% if declaration.contains or declaration.traces %}
 <ul class="chips">
   {% for allergen in declaration.contains %}<li class="chip">{{ allergen.label_en }}</li>{% endfor %}
-  {% for allergen in declaration.may_contain %}<li class="chip chip-trace">{% blocktranslate with name=allergen.label_en %}may contain {{ name }}{% endblocktranslate %}</li>{% endfor %}
+  {% for allergen in declaration.traces %}<li class="chip chip-trace">{% blocktranslate with name=allergen.label_en %}may contain {{ name }}{% endblocktranslate %}</li>{% endfor %}
 </ul>
 {% elif not declaration.needs_staff %}
 <span class="text-body-secondary">{% translate "No allergens" %}</span>
