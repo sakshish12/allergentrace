@@ -92,3 +92,10 @@ def test_form_errors_are_summarised(owner_client):
     html = response.content.decode()
     assert "Please correct the fields marked below." in html
     assert html.count('class="errorlist') >= 2
+
+
+def test_success_messages_close_themselves_and_can_be_closed(owner_client):
+    html = owner_client.post(reverse("supplier_create"), {"name": "Rossi"}, follow=True).content.decode()
+    alert = re.search(r'<div class="alert alert-success[^>]*>', html).group(0)
+    assert "data-autohide" in alert
+    assert 'data-bs-dismiss="alert"' in html and "js/app.js" in html
