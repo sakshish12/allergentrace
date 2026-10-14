@@ -1,3 +1,5 @@
+from collections.abc import Mapping
+from dataclasses import dataclass
 from enum import StrEnum
 
 
@@ -44,3 +46,54 @@ _LABELS = {
     Allergen.LUPIN: ("Lupin", "Lupinen"),
     Allergen.MOLLUSCS: ("Molluscs", "Weichtiere"),
 }
+
+
+class Status(StrEnum):
+    """What a guest is told about one allergen in one dish."""
+
+    CONTAINS = "contains"
+    MAY_CONTAIN = "may_contain"
+    ASK_STAFF = "ask_staff"  # BR-4: the dish uses an ingredient with unknown data
+    FREE = "free"
+
+
+# An explanation path: the names from a dish's direct component down to the source
+# ingredient, e.g. ("Pesto", "Cashews") for "Pasta al pesto contains nuts".
+Path = tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class IngredientNode:
+    id: int
+    name: str
+    contains: frozenset[Allergen]
+    may_contain: frozenset[Allergen]
+    known: bool  # False while nobody has checked the data against the label
+
+
+@dataclass(frozen=True)
+class RecipeNode:
+    id: int
+    name: str
+    ingredient_ids: tuple[int, ...]
+    recipe_ids: tuple[int, ...]  # sub-recipes such as sauces or doughs
+
+
+@dataclass(frozen=True)
+class Declaration:
+    """The calculated allergen declaration of a recipe, with the reason for every entry."""
+
+    contains: Mapping[Allergen, tuple[Path, ...]]
+    may_contain: Mapping[Allergen, tuple[Path, ...]]
+    unknown: tuple[Path, ...]  # paths to ingredients whose data is not checked yet
+
+    @property
+    def needs_staff(self) -> bool:
+        return bool(self.unknown)
+
+    def status(self, allergen: Allergen) -> Status:
+        if allergen in self.contains:
+            return Status.CONTAINS
+        if allergen in self.may_contain:
+            return Status.MAY_CONTAIN
+        return Status.ASK_STAFF if self.needs_staff else Status.FREE
