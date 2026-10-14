@@ -85,6 +85,8 @@ DATABASES = {
         default="postgres://allergentrace:allergentrace@localhost:5432/allergentrace",
     )
 }
+# Fail with a clear error instead of hanging when the database cannot be reached.
+DATABASES["default"].setdefault("OPTIONS", {})["connect_timeout"] = 10
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
