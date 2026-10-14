@@ -86,8 +86,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-LANGUAGE_CODE = "de"
-LANGUAGES = [("de", "Deutsch"), ("en", "English")]
+LANGUAGE_CODE = "en"
+# German is switched on in Sprint 4 together with the German translations (US-14); until
+# then Django's own German strings would mix with English ones.
+LANGUAGES = [("en", "English")]
 LOCALE_PATHS = [BASE_DIR / "locale"]
 TIME_ZONE = "Europe/Berlin"
 USE_I18N = True
