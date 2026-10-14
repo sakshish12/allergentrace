@@ -36,9 +36,9 @@ Roles inherit rights: Owner ⊃ Kitchen ⊃ Service. Guests do not log in.
 - **Priority:** Must | **Points:** 5 | **Sprint:** 1
 - **Story:** As kitchen staff, I want to enter an ingredient once with its status for each of the 14 allergens, so that I never have to enter allergens per dish again.
 - **Acceptance criteria:**
-  - The form shows all 14 allergens of Annex II of Regulation (EU) No 1169/2011.
-  - Each allergen has one status: contains, may contain, free or unknown.
-  - The default status of every allergen is "unknown", never "free" (BR-4).
+  - The form shows all 14 allergens of Annex II of Regulation (EU) No 1169/2011, each with the choice "contains", "may contain" or neither.
+  - The same allergen cannot be marked as both "contains" and "may contain".
+  - The ingredient has a data status: "unknown" until a person confirms that the allergen data is complete; confirming stores the date ("verified on"). New ingredients start as "unknown", never as allergen-free (BR-4).
   - An ingredient has a name, an optional product name and an optional supplier.
 
 ### US-05 Record equipment
@@ -64,7 +64,7 @@ Roles inherit rights: Owner ⊃ Kitchen ⊃ Service. Guests do not log in.
 - **Acceptance criteria:**
   - The declaration contains every allergen of every component at any depth (BR-1).
   - "Contains" overrides "may contain" for the same allergen (BR-2).
-  - If any component has the status "unknown" for an allergen, the dish shows "please ask staff" for it and never "free" (BR-4).
+  - If any ingredient of the dish, at any depth, has the data status "unknown", the dish shows "please ask staff" and is never listed as free of an allergen (BR-4).
   - The calculation is covered by unit tests and property-based tests.
 
 ### US-08 Explain why a dish contains an allergen
@@ -149,7 +149,7 @@ Roles inherit rights: Owner ⊃ Kitchen ⊃ Service. Guests do not log in.
 - **Priority:** Should | **Points:** 2 | **Sprint:** 5
 - **Story:** As kitchen staff, I want a list of all ingredients with "unknown" allergen data, so that I know which suppliers I still have to ask.
 - **Acceptance criteria:**
-  - The list shows each ingredient with its unknown allergens and its supplier.
+  - The list shows each ingredient with data status "unknown", its supplier and the dishes that use it.
 
 ### US-19 Copy a recipe
 - **Priority:** Should | **Points:** 2 | **Sprint:** 5
