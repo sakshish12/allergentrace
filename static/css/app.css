@@ -181,11 +181,11 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--to
 .ticket {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-top: 6px solid var(--basil);
   border-radius: 0 0 0.75rem 0.75rem; /* square top like a ticket torn from the printer */
-  padding: 1.25rem 1.4rem;
+  padding: calc(1.25rem + 6px) 1.4rem 1.25rem;
   max-width: 26rem;
-  box-shadow: 0 1px 0 var(--line), 0 12px 24px -18px rgba(43, 38, 33, 0.45);
+  /* the green header strip is an inset shadow, so it never fights the rounded corners */
+  box-shadow: inset 0 6px 0 var(--basil), 0 1px 0 var(--line), 0 12px 24px -18px rgba(43, 38, 33, 0.45);
   transform: rotate(-1.2deg);
 }
 .ticket-dish { font-family: var(--font-display); font-size: 1.35rem; font-weight: 650; margin-bottom: 0.75rem; }
