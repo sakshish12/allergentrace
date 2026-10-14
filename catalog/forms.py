@@ -10,7 +10,8 @@ from config.forms import BootstrapFormMixin
 class SupplierForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Supplier
-        fields = ["name", "contact"]
+        fields = ["name", "contact_person", "phone", "email"]
+        widgets = {"phone": forms.TextInput(attrs={"type": "tel", "autocomplete": "tel"})}
 
     def __init__(self, *args, business, **kwargs):
         super().__init__(*args, **kwargs)
@@ -38,6 +39,8 @@ class IngredientForm(BootstrapFormMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.instance.business = business  # needed by Ingredient.clean() for the supplier check
         self.fields["supplier"].queryset = Supplier.objects.filter(business=business)
+        self.fields["supplier"].empty_label = _("No supplier")
+        self.has_suppliers = self.fields["supplier"].queryset.exists()
         self.initial["data_complete"] = self.instance.status == Ingredient.Status.COMPLETE
 
     def allergen_rows(self):

@@ -1,3 +1,5 @@
+import re
+
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -12,13 +14,21 @@ ALLERGEN_CHOICES = [(a.value, a.label_en) for a in Allergen]
 class Supplier(models.Model):
     business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name="suppliers")
     name = models.CharField(_("name"), max_length=120)
-    contact = models.CharField(_("contact"), max_length=200, blank=True)
+    contact_person = models.CharField(_("contact person"), max_length=120, blank=True)
+    phone = models.CharField(_("phone"), max_length=40, blank=True)
+    email = models.EmailField(_("e-mail"), blank=True)
 
     class Meta:
         ordering = ["name"]
 
     def __str__(self):
         return self.name
+
+    @property
+    def phone_href(self):
+        """tel: link for phones; keeps only digits and a leading plus."""
+        digits = re.sub(r"[^\d+]", "", self.phone)
+        return f"tel:{digits}" if digits else ""
 
 
 class Ingredient(models.Model):
