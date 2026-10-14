@@ -29,6 +29,7 @@
       <div class="collapse navbar-collapse" id="mainnav">
         {% if user.is_authenticated and user.membership %}
         <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link{% if 'recipe' in url_name %} active{% endif %}" {% if 'recipe' in url_name %}aria-current="page"{% endif %} href="{% url 'recipe_list' %}">{% translate "Recipes" %}</a></li>
           <li class="nav-item"><a class="nav-link{% if 'ingredient' in url_name %} active{% endif %}" {% if 'ingredient' in url_name %}aria-current="page"{% endif %} href="{% url 'ingredient_list' %}">{% translate "Ingredients" %}</a></li>
           <li class="nav-item"><a class="nav-link{% if 'supplier' in url_name %} active{% endif %}" {% if 'supplier' in url_name %}aria-current="page"{% endif %} href="{% url 'supplier_list' %}">{% translate "Suppliers" %}</a></li>
           {% if user.membership.is_owner %}

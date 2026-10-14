@@ -221,3 +221,7 @@ body { overflow-wrap: anywhere; }
 /* Header backgrounds must follow the tables' rounded corners */
 .data-table thead th:first-child, .allergen-table thead th:first-child { border-top-left-radius: 0.5rem; }
 .data-table thead th:last-child, .allergen-table thead th:last-child { border-top-right-radius: 0.5rem; }
+
+/* The declaration on a recipe page uses the ticket look, without the tilt */
+.ticket-flat { transform: none; max-width: none; }
+.ticket-flat:hover { transform: none; }

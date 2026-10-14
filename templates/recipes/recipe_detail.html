@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1 class="h2">{{ recipe.name }}</h1>
+    <p class="text-body-secondary mb-0">{% if recipe.is_dish %}{% translate "Dish on the menu" %}{% else %}{% translate "Part used inside other recipes" %}{% endif %}</p>
+  </div>
+  {% if user.membership.can_edit %}
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-secondary" href="{% url 'recipe_update' recipe.pk %}">{% translate "Rename" %}</a>
+    <a class="btn btn-outline-secondary" href="{% url 'recipe_delete' recipe.pk %}">{% translate "Delete" %}</a>
+  </div>
+  {% endif %}
+</div>
+
+<div class="row g-4 g-lg-5">
+  <section class="col-lg-6" aria-labelledby="parts-heading">
+    <h2 id="parts-heading" class="h4">{% translate "Made from" %}</h2>
+    {% if components %}
+    <table class="data-table mb-3">
+      <thead><tr><th scope="col">{% translate "Part" %}</th><th scope="col">{% translate "Quantity" %}</th>{% if user.membership.can_edit %}<th scope="col"><span class="visually-hidden">{% translate "Actions" %}</span></th>{% endif %}</tr></thead>
+      <tbody>
+      {% for component in components %}
+        <tr>
+          <td>
+            {% if component.sub_recipe %}
+            <a class="fw-bold" href="{% url 'recipe_detail' component.sub_recipe.pk %}">{{ component.sub_recipe }}</a>
+            <div class="small text-body-secondary">{% translate "Recipe" %}</div>
+            {% else %}
+            <span class="fw-bold">{{ component.ingredient }}</span>
+            {% if component.ingredient.status != "complete" %}<div><span class="badge-status badge-unknown">{% translate "Unknown data" %}</span></div>{% endif %}
+            {% endif %}
+          </td>
+          <td data-label="{% translate 'Quantity' %}">{% if component.quantity %}{{ component.quantity|floatformat:"-2" }} {{ component.unit }}{% else %}<span class="text-body-secondary">{% translate "not given" %}</span>{% endif %}</td>
+          {% if user.membership.can_edit %}
+          <td class="row-actions">
+            <form method="post" action="{% url 'component_remove' recipe.pk component.pk %}">{% csrf_token %}
+              <button class="btn btn-link link-danger p-0" type="submit">{% translate "Remove" %}<span class="visually-hidden"> {{ component }}</span></button>
+            </form>
+          </td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="text-body-secondary">{% translate "No parts yet. Add the ingredients and sub-recipes this recipe is made from." %}</p>
+    {% endif %}
+
+    {% if component_form %}
+    <form method="post" class="p-3 border rounded-3 bg-white" novalidate>
+      {% csrf_token %}
+      <h3 class="h5">{% translate "Add a part" %}</h3>
+      {% with form=component_form %}{% include "_form_errors.html" %}{% endwith %}
+      <div class="mb-3">{{ component_form.part.as_field_group }}</div>
+      <div class="row">
+        <div class="col-6 mb-3">{{ component_form.quantity.as_field_group }}</div>
+        <div class="col-6 mb-3">{{ component_form.unit.as_field_group }}</div>
+      </div>
+      <button class="btn btn-primary" type="submit">{% translate "Add" %}</button>
+    </form>
+    {% endif %}
+
+    {% if used_in %}
+    <p class="mt-4 mb-0">{% translate "Used in:" %}
+      {% for parent in used_in %}<a href="{% url 'recipe_detail' parent.pk %}">{{ parent }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+    </p>
+    {% endif %}
+  </section>
+
+  <section class="col-lg-6" aria-labelledby="declaration-heading">
+    <div class="ticket ticket-flat">
+      <h2 id="declaration-heading" class="ticket-dish">{% translate "Allergen declaration" %}</h2>
+      {% if declaration.needs_staff %}
+      <div class="alert alert-warning mb-3" role="status">
+        <strong>{% translate "Please ask staff." %}</strong>
+        {% translate "These parts have no checked allergen data, so the dish cannot be called free of any allergen:" %}
+        <ul class="mb-0 mt-1">{% for path in declaration.unknown %}<li>{{ path|join:" → " }}</li>{% endfor %}</ul>
+      </div>
+      {% endif %}
+      <dl class="mb-0">
+        <dt>{% translate "Contains" %}</dt>
+        <dd>
+          {% for allergen, paths in declaration.contains.items %}
+          <div class="mb-2"><span class="chip">{{ allergen.label_en }}</span>
+            <ul class="list-unstyled small text-body-secondary mb-0 mt-1">{% for path in paths %}<li>{% translate "from" %} {{ path|join:" → " }}</li>{% endfor %}</ul>
+          </div>
+          {% empty %}<span class="text-body-secondary">{% translate "nothing declared" %}</span>{% endfor %}
+        </dd>
+        <dt>{% translate "May contain" %}</dt>
+        <dd>
+          {% for allergen, paths in declaration.may_contain.items %}
+          <div class="mb-2"><span class="chip chip-trace">{{ allergen.label_en }}</span>
+            <ul class="list-unstyled small text-body-secondary mb-0 mt-1">{% for path in paths %}<li>{% translate "from" %} {{ path|join:" → " }}</li>{% endfor %}</ul>
+          </div>
+          {% empty %}<span class="text-body-secondary">{% translate "nothing declared" %}</span>{% endfor %}
+        </dd>
+      </dl>
+    </div>
+  </section>
+</div>
+{% endblock %}

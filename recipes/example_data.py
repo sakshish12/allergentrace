@@ -4,10 +4,13 @@ The allergen information reflects what these products typically declare. It is e
 the message after loading tells the owner to check it against their own product labels.
 """
 
+from decimal import Decimal
+
 from django.db import transaction
 from django.utils import timezone
 
 from catalog.models import Ingredient, Supplier
+from recipes.models import Component, Recipe
 
 SUPPLIERS = [
     # name, contact person, phone, e-mail (reserved .example domain, numbers are fictitious)
@@ -59,15 +62,66 @@ INGREDIENTS = [
     ),
     ("Chilli flakes", "Chilli flakes, loose", "", [], [], False),
     ("Espresso beans", "Espresso blend, 1 kg", "", [], [], True),
+    ("Olive oil", "Extra virgin olive oil", "Feinkost Rossi", [], [], True),
+]
+
+# name, served as a dish?, parts: (name, "i" for ingredient or "r" for recipe, quantity, unit).
+# Sub-recipes come before the dishes that use them.
+RECIPES = [
+    (
+        "Herb mayo",
+        False,
+        [("Mayonnaise", "i", 200, "g"), ("Dijon mustard", "i", 10, "g"), ("Lemon", "i", 0.25, "pieces")],
+    ),
+    (
+        "Pesto dressing",
+        False,
+        [("Basil pesto", "i", 60, "g"), ("Olive oil", "i", 40, "ml"), ("Lemon", "i", 0.5, "pieces")],
+    ),
+    (
+        "Avocado toast",
+        True,
+        [
+            ("Sourdough bread", "i", 2, "slices"),
+            ("Avocado", "i", 0.5, "pieces"),
+            ("Feta", "i", 30, "g"),
+            ("Lemon", "i", 0.1, "pieces"),
+            ("Chilli flakes", "i", 1, "g"),
+        ],
+    ),
+    (
+        "Smoked salmon sandwich",
+        True,
+        [
+            ("Sourdough bread", "i", 2, "slices"),
+            ("Smoked salmon", "i", 60, "g"),
+            ("Herb mayo", "r", 20, "g"),
+            ("Mixed salad leaves", "i", 15, "g"),
+        ],
+    ),
+    (
+        "Green salad with pesto dressing",
+        True,
+        [("Mixed salad leaves", "i", 80, "g"), ("Feta", "i", 40, "g"), ("Pesto dressing", "r", 30, "ml")],
+    ),
+    ("Yogurt bowl with granola", True, [("Greek yogurt", "i", 150, "g"), ("Granola", "i", 50, "g")]),
+    (
+        "Hummus plate",
+        True,
+        [("Hummus", "i", 120, "g"), ("Sourdough bread", "i", 2, "slices"), ("Olive oil", "i", 10, "ml")],
+    ),
+    ("Butter croissant", True, [("Butter croissant", "i", 1, "pieces"), ("Butter", "i", 10, "g")]),
+    ("Cappuccino", True, [("Espresso beans", "i", 18, "g"), ("Whole milk", "i", 150, "ml")]),
+    ("Oat flat white", True, [("Espresso beans", "i", 18, "g"), ("Oat drink", "i", 120, "ml")]),
 ]
 
 
 @transaction.atomic
 def load_example_data(business):
-    """Add the example suppliers and ingredients that the business does not have yet.
+    """Add the example suppliers, ingredients and recipes that the business does not have yet.
 
-    Safe to run twice: existing names are never changed or duplicated. Returns the number of
-    ingredients added.
+    Safe to run twice: existing names are never changed or duplicated, and recipes use the
+    business's own ingredient if it has the same name. Returns (ingredients added, recipes added).
     """
     suppliers = {s.name: s for s in business.suppliers.all()}
     for name, person, phone, email in SUPPLIERS:
@@ -93,4 +147,23 @@ def load_example_data(business):
         if name not in existing
     ]
     Ingredient.objects.bulk_create(new)
-    return len(new)
+
+    ingredients = {i.name: i for i in business.ingredients.all()}
+    recipes = {r.name: r for r in business.recipes.all()}
+    added_recipes = 0
+    for name, is_dish, parts in RECIPES:
+        if name in recipes:
+            continue
+        recipe = recipes[name] = Recipe.objects.create(business=business, name=name, is_dish=is_dish)
+        added_recipes += 1
+        Component.objects.bulk_create(
+            Component(
+                recipe=recipe,
+                ingredient=ingredients[part] if kind == "i" else None,
+                sub_recipe=recipes[part] if kind == "r" else None,
+                quantity=Decimal(str(quantity)),
+                unit=unit,
+            )
+            for part, kind, quantity, unit in parts
+        )
+    return len(new), added_recipes

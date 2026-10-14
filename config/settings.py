@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "accounts",
     "catalog",
+    "recipes",
 ]
 
 LOGIN_URL = "login"

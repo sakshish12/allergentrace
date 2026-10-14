@@ -1,15 +1,13 @@
 from django import forms
 from django.contrib import messages
+from django.db.models import ProtectedError
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import ngettext
-from django.views import View
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from accounts.models import Role
-from accounts.permissions import BusinessFormMixin, BusinessScopedMixin, MemberRequiredMixin
-from catalog.example_data import load_example_data
+from accounts.permissions import BusinessFormMixin, BusinessScopedMixin
 from catalog.forms import IngredientForm, SupplierForm
 from catalog.models import Ingredient, Supplier
 
@@ -28,7 +26,17 @@ class DeleteConfirmView(BusinessScopedMixin, DeleteView):
 
     def form_valid(self, form):
         name = str(self.object)
-        response = super().form_valid(form)
+        try:
+            response = super().form_valid(form)
+        except ProtectedError as error:
+            # Still a part of recipes: name them, so the user knows what to change first.
+            users = sorted({str(component.recipe) for component in error.protected_objects})
+            messages.error(
+                self.request,
+                _("“%(name)s” is still used in: %(recipes)s. Remove it from these recipes first.")
+                % {"name": name, "recipes": ", ".join(users)},
+            )
+            return redirect(self.request.path)
         messages.success(self.request, _("“%(name)s” deleted.") % {"name": name})
         return response
 
@@ -94,28 +102,3 @@ class IngredientUpdateView(SavedMessageMixin, BusinessFormMixin, UpdateView):
 class IngredientDeleteView(DeleteConfirmView):
     model = Ingredient
     success_url = reverse_lazy("ingredient_list")
-
-
-class ExampleDataView(MemberRequiredMixin, View):
-    """Fills the business with example suppliers and ingredients (POST only, owner only)."""
-
-    min_role = Role.OWNER
-    http_method_names = ["post"]
-
-    def post(self, request):
-        added = load_example_data(request.business)
-        if added:
-            messages.success(
-                request,
-                ngettext(
-                    "%(count)d example ingredient added. Check it against your own product labels "
-                    "before you use it for guests.",
-                    "%(count)d example ingredients added. Check them against your own product labels "
-                    "before you use them for guests.",
-                    added,
-                )
-                % {"count": added},
-            )
-        else:
-            messages.info(request, _("The example data is already there."))
-        return redirect("ingredient_list")

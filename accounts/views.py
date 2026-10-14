@@ -47,6 +47,7 @@ class DashboardView(MemberRequiredMixin, TemplateView):
             ingredient_count=ingredients.count(),
             unknown_count=ingredients.filter(status="unknown").count(),
             supplier_count=self.request.business.suppliers.count(),
+            recipe_count=self.request.business.recipes.count(),
             **kwargs,
         )
 

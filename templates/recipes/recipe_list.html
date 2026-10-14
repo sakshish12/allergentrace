@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Recipes" %} – AllergenTrace{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1 class="h2">{% translate "Recipes" %}</h1>
+  {% if user.membership.can_edit %}<a class="btn btn-primary" href="{% url 'recipe_create' %}">{% translate "New recipe" %}</a>{% endif %}
+</div>
+
+{% if not object_list %}
+<div class="measure">
+  <p class="lead">{% translate "No recipes yet. A recipe combines ingredients, and also other recipes such as a sauce or a dough. Its allergens are calculated for you." %}</p>
+  {% if user.membership.can_edit %}<a class="btn btn-primary" href="{% url 'recipe_create' %}">{% translate "Create your first recipe" %}</a>{% endif %}
+</div>
+{% endif %}
+
+{% if dishes %}
+<h2 class="h4 mt-2">{% translate "Dishes" %}</h2>
+<table class="data-table mb-5">
+  <thead><tr><th scope="col">{% translate "Dish" %}</th><th scope="col">{% translate "Calculated allergens" %}</th></tr></thead>
+  <tbody>
+  {% for recipe, declaration in dishes %}
+    <tr>
+      <td><a class="fw-bold" href="{% url 'recipe_detail' recipe.pk %}">{{ recipe.name }}</a></td>
+      <td data-label="{% translate 'Calculated allergens' %}">{% include "recipes/_declaration_summary.html" %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if parts %}
+<h2 class="h4">{% translate "Sauces, doughs and other parts" %}</h2>
+<p class="text-body-secondary measure">{% translate "These are used inside dishes and are not on the menu themselves." %}</p>
+<table class="data-table">
+  <thead><tr><th scope="col">{% translate "Recipe" %}</th><th scope="col">{% translate "Calculated allergens" %}</th></tr></thead>
+  <tbody>
+  {% for recipe, declaration in parts %}
+    <tr>
+      <td><a class="fw-bold" href="{% url 'recipe_detail' recipe.pk %}">{{ recipe.name }}</a></td>
+      <td data-label="{% translate 'Calculated allergens' %}">{% include "recipes/_declaration_summary.html" %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}
