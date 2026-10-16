@@ -1,14 +1,15 @@
 @startuml engine
 !include _style.iuml
 title allergen_engine – building block view, level 2
+left to right direction
 
 package "allergen_engine (plain Python, no Django)" {
-  [model\nAllergen, Status,\nnodes, Declaration] as model
-  [graph\ntopological order,\ncycle check (BR-5)] as graph
   [propagation\ndeclare_all\n(BR-1, BR-2, BR-4)] as prop
+  [graph\ntopological order,\ncycle check (BR-5)] as graph
   [cross_contact\nshared equipment\n(BR-3)] as cc
   [impact\ndiff of declarations\n(US-10)] as impact
   [policy\nmerge, pending removals\n(BR-6)] as policy
+  [model\nAllergen, Status,\nnodes, Declaration] as model
   interface "RecipeRepository\n(port)" as port
   [InMemoryRepository\n(for tests)] as mem
 }
