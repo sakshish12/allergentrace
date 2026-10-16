@@ -1,0 +1,32 @@
+@startuml use-cases
+!include _style.iuml
+left to right direction
+title AllergenTrace – use cases
+
+actor Owner
+actor "Kitchen staff" as Kitchen
+actor "Service staff" as Service
+actor Guest
+Owner -|> Kitchen
+Kitchen -|> Service
+
+rectangle "AllergenTrace" {
+  usecase "UC1 Register business\nand manage staff\n(US-01, US-02)" as UC1
+  usecase "UC2 Maintain suppliers,\ningredients, equipment\n(US-03 – US-05)" as UC2
+  usecase "UC3 Build recipes with\nsub-recipes (US-06)" as UC3
+  usecase "UC4 View declaration\nand explanation\n(US-07, US-08, US-09)" as UC4
+  usecase "UC5 Review change impact\n(US-10)" as UC5
+  usecase "UC6 Approve removals,\nview history\n(US-11, US-12)" as UC6
+  usecase "UC7 Publish menu, PDF list,\nQR code (US-13, US-16, US-17)" as UC7
+  usecase "UC8 Read menu and filter\nallergens (US-14, US-15)" as UC8
+}
+
+Owner --> UC1
+Owner --> UC6
+Owner --> UC7
+Kitchen --> UC2
+Kitchen --> UC3
+Kitchen --> UC5
+Service --> UC4
+Guest --> UC8
+@enduml

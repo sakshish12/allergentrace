@@ -1,0 +1,57 @@
+' Shared look of all AllergenTrace diagrams (palette from docs/design.md)
+skinparam dpi 300
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam defaultFontColor #0D1821
+skinparam ArrowColor #344966
+skinparam ArrowThickness 1.1
+skinparam ArrowFontSize 10
+skinparam roundCorner 6
+skinparam BackgroundColor white
+skinparam actor {
+  BorderColor #344966
+  BackgroundColor #F0F4EF
+}
+skinparam usecase {
+  BorderColor #344966
+  BackgroundColor #F0F4EF
+}
+skinparam rectangle {
+  BorderColor #344966
+  BackgroundColor #FFFFFF
+}
+skinparam component {
+  BorderColor #344966
+  BackgroundColor #F0F4EF
+}
+skinparam package {
+  BorderColor #344966
+  BackgroundColor #FFFFFF
+}
+skinparam node {
+  BorderColor #344966
+  BackgroundColor #F0F4EF
+}
+skinparam database {
+  BorderColor #344966
+  BackgroundColor #F0F4EF
+}
+skinparam class {
+  BorderColor #344966
+  BackgroundColor #F0F4EF
+  HeaderBackgroundColor #B4CDED
+}
+skinparam interface {
+  BorderColor #344966
+  BackgroundColor #B4CDED
+}
+skinparam sequence {
+  ParticipantBorderColor #344966
+  ParticipantBackgroundColor #F0F4EF
+  LifeLineBorderColor #7A8796
+}
+skinparam note {
+  BorderColor #7A8796
+  BackgroundColor #FFFFFF
+}

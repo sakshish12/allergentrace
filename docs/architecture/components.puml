@@ -1,0 +1,37 @@
+@startuml components
+!include _style.iuml
+title AllergenTrace – building block view, level 1
+skinparam linetype ortho
+
+package "Presentation layer" {
+  [Back-office pages\n(templates, views)] as UI
+  [Guest menu page\n(public, no login)] as Guest
+}
+package "Application layer (Django apps)" {
+  [accounts\nusers, businesses, roles] as accounts
+  [catalog\nsuppliers, ingredients,\nequipment] as catalog
+  [recipes\nrecipes, components,\nrepository adapter] as recipes
+  [publication\ndeclarations, approval,\nmenu, PDF, QR, history] as publication
+}
+package "Domain layer" {
+  [allergen_engine\ncalculation, cross-contact,\nimpact, fail-safe policy] as engine
+  interface "RecipeRepository" as port
+}
+package "Infrastructure" {
+  database "PostgreSQL 17" as db
+}
+
+UI --> publication
+UI --> recipes
+UI --> catalog
+UI --> accounts
+Guest --> publication : reads published\ndeclarations only
+
+catalog --> accounts : business
+recipes --> catalog : ingredients,\nequipment
+publication --> recipes : recipes
+publication --> engine : sync, impact,\nmerge
+recipes ..|> port : implements
+engine --> port : reads graph
+accounts --> db : Django ORM\n(all four apps)
+@enduml

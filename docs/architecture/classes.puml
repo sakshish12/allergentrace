@@ -1,0 +1,69 @@
+@startuml classes
+!include _style.iuml
+title AllergenTrace – domain model (as implemented)
+hide methods
+
+class Business {
+  name
+  created_at
+}
+class Membership {
+  role : Owner | Kitchen | Service
+}
+class User <<Django>> {
+  email
+  password (hash)
+}
+class Supplier {
+  name
+  contact_person
+  phone
+  email
+}
+class Ingredient {
+  name
+  product_name
+  contains : Allergen[]
+  may_contain : Allergen[]
+  status : unknown | complete
+  verified_on
+}
+class Equipment {
+  name
+  dedicated : bool
+}
+class Recipe {
+  name
+  is_dish : bool
+}
+class Component {
+  quantity
+  unit
+}
+class PublishedDeclaration {
+  contains / may_contain
+  ask_staff
+  calc_contains / calc_may_contain
+  calc_ask_staff
+  approved_at
+}
+class Menu {
+  qr_token
+}
+
+User "1" -- "0..1" Membership
+Membership "*" -- "1" Business
+Business "1" *-- "*" Supplier
+Business "1" *-- "*" Ingredient
+Business "1" *-- "*" Equipment
+Business "1" *-- "*" Recipe
+Business "1" *-- "0..1" Menu
+Ingredient "*" --> "0..1" Supplier
+Recipe "1" *-- "*" Component
+Component "*" --> "0..1" Ingredient : ingredient
+Component "*" --> "0..1" Recipe : sub_recipe
+Recipe "*" -- "*" Equipment
+Recipe "1" -- "1" PublishedDeclaration
+Menu "*" --> "*" Recipe : dishes
+note bottom of Component : exactly one of ingredient\nor sub_recipe is set
+@enduml

@@ -1,0 +1,27 @@
+@startuml publication-sequence
+!include _style.iuml
+title Runtime view – kitchen staff removes an ingredient (BR-6)
+
+actor "Kitchen staff" as K
+participant "recipes view" as V
+participant "PublicationSync\nMiddleware" as M
+participant "publication.sync" as S
+participant "allergen_engine" as E
+database "PostgreSQL" as DB
+actor Owner as O
+
+K -> V : POST remove component
+V -> DB : delete component
+V --> M : redirect
+M -> S : sync(business)
+S -> DB : load recipe graph (5 queries)
+S -> E : declare_all(repository)
+E --> S : declarations
+S -> E : merge(published, calculated)
+E --> S : additions published,\nremovals kept
+S -> DB : save declarations + history
+S --> M : impact (affected dishes)
+M --> K : page with impact list,\n"waiting for approval"
+O -> S : approve
+S -> DB : published := calculated
+@enduml

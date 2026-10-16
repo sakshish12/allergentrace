@@ -1,0 +1,25 @@
+@startuml deployment
+!include _style.iuml
+title AllergenTrace – deployment view
+
+node "Developer laptop" as dev {
+  [docker compose\n(web + postgres:17)] as compose
+}
+node "GitHub" as gh {
+  [Repository\nissues, milestones] as repo
+  [GitHub Actions\nlint, tests, Docker smoke test] as ci
+}
+node "Render (Frankfurt, free web service)" as render {
+  [Docker container\ngunicorn + Django + WhiteNoise] as web
+}
+node "Neon (Frankfurt, free)" as neon {
+  database "PostgreSQL 17" as pg
+}
+actor "Browser /\nsmartphone" as browser
+
+dev --> repo : git push
+repo --> ci : on every push
+repo --> web : auto-deploy main
+web --> pg : DATABASE_URL (TLS)
+browser --> web : HTTPS
+@enduml
