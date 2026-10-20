@@ -115,6 +115,14 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# US-20: approval notices. In the cloud they go through the Brevo API (see config/mail.py);
+# locally they are printed to the console.
+BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "")
+EMAIL_BACKEND = (
+    "config.mail.BrevoEmailBackend" if BREVO_API_KEY else "django.core.mail.backends.console.EmailBackend"
+)
+DEFAULT_FROM_EMAIL = os.environ.get("DJANGO_DEFAULT_FROM_EMAIL", "AllergenTrace <noreply@localhost>")
+
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = os.environ.get("DJANGO_SECURE_SSL_REDIRECT", "True") == "True"

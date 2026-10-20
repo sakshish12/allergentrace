@@ -10,7 +10,7 @@ actor "Food control\nauthority" as Authority
 actor "Supplier" as Supplier
 
 rectangle "AllergenTrace\n(web application)" as System #F0F4EF
-rectangle "E-mail service\n(planned, US-20)" as Mail #FFFFFF
+rectangle "E-mail service\n(Brevo API, US-20)" as Mail #FFFFFF
 rectangle "Open Food Facts API\n(optional, US-21)" as OFF #FFFFFF
 
 Owner --> System : manages staff,\napproves removals,\npublishes menu
@@ -19,6 +19,6 @@ Service --> System : looks up dishes\nand explanations
 Guest --> System : reads QR menu,\nfilters allergens
 System --> Authority : PDF allergen list\n(printed by the owner)
 Supplier ..> Kitchen : product labels,\nspecification sheets
-System ..> Mail : approval notices
+System --> Mail : approval notices\n(HTTPS)
 System ..> OFF : product lookup
 @enduml

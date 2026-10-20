@@ -9,6 +9,9 @@
   {% if user.membership.can_edit %}
   <div class="d-flex flex-wrap gap-2">
     <a class="btn btn-outline-secondary" href="{% url 'recipe_update' recipe.pk %}">{% translate "Rename" %}</a>
+    <form method="post" action="{% url 'recipe_copy' recipe.pk %}">{% csrf_token %}
+      <button class="btn btn-outline-secondary" type="submit">{% translate "Copy" %}</button>
+    </form>
     <a class="btn btn-outline-secondary" href="{% url 'recipe_delete' recipe.pk %}">{% translate "Delete" %}</a>
   </div>
   {% endif %}

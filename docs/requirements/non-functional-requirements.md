@@ -13,5 +13,5 @@ The non-functional requirements are structured along the product quality model o
 | NFR-07 | Compatibility | The application works in current versions of Chrome, Firefox and Safari and on screens from 360 px width. | Manual browser test; Playwright tests in Chromium. |
 | NFR-08 | Maintainability (modularity, testability) | `allergen_engine` has no dependency on Django; code passes the Ruff linter without errors. | Import check in tests; Ruff in CI. |
 | NFR-09 | Flexibility (installability) | The whole application starts with one command (`docker compose up`). | Fresh start on a clean machine following the README. |
-| NFR-10 | Reliability (availability) | The public menu is reachable at any time without login. | Check of the cloud deployment. |
+| NFR-10 | Reliability (availability) | The public menu is reachable without login in at least 95 % of a calendar month. A first request after a pause may take up to 60 seconds while the free instance wakes up (TD-01); this counts as available. | Monthly check of the hosting provider's event log and status page. |
 | NFR-11 | Data protection (GDPR) | All data is hosted in the EU; the guest menu stores no personal data and sets no tracking cookies. | Check of hosting regions and of cookies in the browser. |

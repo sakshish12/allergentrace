@@ -1,5 +1,7 @@
+from django.urls import reverse
+
 from allergen_engine.model import Allergen
-from publication.services import sync
+from publication.services import notify_approval_needed, sync
 from recipes.models import Recipe
 
 REDIRECTS = {301, 302, 303}
@@ -27,6 +29,8 @@ class PublicationSyncMiddleware:
                 changes = sync(membership.business)
                 if changes:
                     request.session["impact"] = describe(changes)
+                    url = request.build_absolute_uri(reverse("approvals"))
+                    notify_approval_needed(membership.business, changes, url, request.user)
         return response
 
 

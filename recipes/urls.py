@@ -14,5 +14,7 @@ urlpatterns = [
         name="component_remove",
     ),
     path("recipes/<int:pk>/equipment/", views.RecipeEquipmentView.as_view(), name="recipe_equipment"),
+    path("recipes/<int:pk>/copy/", views.RecipeCopyView.as_view(), name="recipe_copy"),
+    path("ingredients/unknown/", views.UnknownIngredientsView.as_view(), name="unknown_ingredients"),
     path("example-data/", views.ExampleDataView.as_view(), name="example_data"),
 ]

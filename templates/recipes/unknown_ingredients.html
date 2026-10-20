@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Unknown allergen data" %} – AllergenTrace{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1 class="h2">{% translate "Unknown allergen data" %}</h1>
+  <a class="btn btn-outline-secondary" href="{% url 'ingredient_list' %}">{% translate "All ingredients" %}</a>
+</div>
+<p class="measure text-body-secondary">{% translate "These ingredients are not checked against their label yet, so every dish that uses them shows “please ask staff”. Ask the supplier for the specification, then edit the ingredient and confirm its data." %}</p>
+
+{% if rows %}
+<table class="data-table">
+  <thead><tr>
+    <th scope="col">{% translate "Ingredient" %}</th><th scope="col">{% translate "Supplier" %}</th>
+    <th scope="col">{% translate "Dishes affected" %}</th>
+    {% if user.membership.can_edit %}<th scope="col"><span class="visually-hidden">{% translate "Actions" %}</span></th>{% endif %}
+  </tr></thead>
+  <tbody>
+  {% for ingredient, dishes in rows %}
+    <tr>
+      <td>
+        <div class="fw-bold">{{ ingredient.name }}</div>
+        {% if ingredient.product_name %}<div class="small text-body-secondary">{{ ingredient.product_name }}</div>{% endif %}
+      </td>
+      <td data-label="{% translate 'Supplier' %}">
+        {% with supplier=ingredient.supplier %}
+        {% if supplier %}
+        <div>{{ supplier.name }}{% if supplier.contact_person %}, {{ supplier.contact_person }}{% endif %}</div>
+        {% if supplier.phone_href %}<div><a href="{{ supplier.phone_href }}">{{ supplier.phone }}</a></div>{% endif %}
+        {% if supplier.email %}<div><a href="mailto:{{ supplier.email }}">{{ supplier.email }}</a></div>{% endif %}
+        {% else %}<span class="text-body-secondary">{% translate "No supplier recorded" %}</span>{% endif %}
+        {% endwith %}
+      </td>
+      <td data-label="{% translate 'Dishes affected' %}">
+        {% if dishes %}<ul class="list-unstyled mb-0">{% for dish in dishes %}<li><a href="{% url 'recipe_detail' dish.pk %}">{{ dish.name }}</a></li>{% endfor %}</ul>
+        {% else %}<span class="text-body-secondary">{% translate "Not used in any dish" %}</span>{% endif %}
+      </td>
+      {% if user.membership.can_edit %}
+      <td class="row-actions"><a href="{% url 'ingredient_update' ingredient.pk %}">{% translate "Check data" %}<span class="visually-hidden"> {{ ingredient.name }}</span></a></td>
+      {% endif %}
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="lead measure">{% translate "All ingredients are checked. No dish shows “please ask staff” because of missing data." %}</p>
+{% endif %}
+{% endblock %}

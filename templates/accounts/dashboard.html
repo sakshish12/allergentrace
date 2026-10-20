@@ -8,7 +8,7 @@
 {% if unknown_count %}
 <div class="alert alert-warning measure" role="status">
   {% blocktranslate count counter=unknown_count %}{{ counter }} ingredient has no checked allergen data yet. Dishes using it will show “please ask staff”.{% plural %}{{ counter }} ingredients have no checked allergen data yet. Dishes using them will show “please ask staff”.{% endblocktranslate %}
-  <a href="{% url 'ingredient_list' %}">{% translate "Review ingredients" %}</a>
+  <a href="{% url 'unknown_ingredients' %}">{% translate "See which ones and whom to ask" %}</a>
 </div>
 {% endif %}
 

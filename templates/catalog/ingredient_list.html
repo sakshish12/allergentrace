@@ -4,7 +4,10 @@
 {% block content %}
 <div class="page-head">
   <h1 class="h2">{% translate "Ingredients" %}</h1>
-  {% if user.membership.can_edit %}<a class="btn btn-primary" href="{% url 'ingredient_create' %}">{% translate "New ingredient" %}</a>{% endif %}
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-secondary" href="{% url 'unknown_ingredients' %}">{% translate "Unknown data" %}</a>
+    {% if user.membership.can_edit %}<a class="btn btn-primary" href="{% url 'ingredient_create' %}">{% translate "New ingredient" %}</a>{% endif %}
+  </div>
 </div>
 {% if object_list %}
 <table class="data-table">
