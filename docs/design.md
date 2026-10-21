@@ -42,6 +42,18 @@ Both fonts are served from the application itself, not from Google Fonts, so no 
 - Success, info and error messages appear at the top of the page; form errors are summarised above the form and shown next to each field.
 - Custom pages exist for 403 (role not allowed), 404 (not found) and 500 (server error).
 
+## Surfaces and details
+
+- Two radii only: 6 px for buttons and inputs, 8 px for tables, panels and messages; chips and status badges use 4 px.
+- Surfaces are separated by a thin border or a tone step, never by a drop shadow. The kitchen ticket keeps its dark top strip and slight tilt but has no shadow and does not move on hover.
+- Table headers are small, regular and grey on the white table, without a coloured band. Numbers and dates use tabular figures so columns line up.
+- Red is kept for real warnings and the delete confirmation. Delete and remove links in lists are grey and turn red only on hover or keyboard focus.
+- The dashboard shows the four counts (recipes, ingredients, suppliers, equipment) in one divided strip; each count links to its list.
+- No small uppercase labels above headings. On the guest menu the business name is the heading and "Menu with allergens" sits below it.
+- Buttons shrink slightly (to 97 %) while pressed, over 160 ms. Nothing else animates, and the press effect is switched off when the device asks for reduced motion.
+- Text selection, checkbox colour and the text cursor use the brand colours.
+- The start page shows a real piece of the guest menu (the same markup and styles) instead of an illustration.
+
 ## Checks
 
 `tests/test_pages.py` covers titles, descriptions, error pages, messages and contact links. A browser walkthrough with Playwright and Chrome crawls all internal links and measures horizontal overflow at 360 px and 1280 px width.

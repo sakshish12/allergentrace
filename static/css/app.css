@@ -67,9 +67,25 @@
   --bs-link-color-rgb: 52, 73, 102;
   --bs-link-hover-color-rgb: 38, 56, 80;
   --bs-primary-rgb: 52, 73, 102;
-  --bs-border-radius: 0.5rem;
+  --bs-border-radius: 6px;
   --bs-focus-ring-color: rgba(52, 73, 102, 0.35);
+
+  /* Two radii only: tight on controls and chips, a little softer on surfaces */
+  --r-control: 6px;
+  --r-panel: 8px;
+  --r-chip: 4px;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
+
+/* Phones get a 16px page margin instead of Bootstrap's 12px */
+.container { --bs-gutter-x: 2rem; }
+
+/* Browser surfaces follow the palette too */
+::selection { background: var(--sky); color: var(--navy); }
+html { accent-color: var(--slate); caret-color: var(--slate); }
+a { text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+table, time, .badge-count, .stat-value { font-variant-numeric: tabular-nums; }
 
 /* Typography: one display face for headings, one reading face for everything else. */
 h1, h2, h3, h4, .h1, .h2, .h3, .h4, .navbar-brand {
@@ -94,7 +110,12 @@ h1, h2, h3, h4, .h1, .h2, .h3, .h4, .navbar-brand {
 .nav-context { font-size: 0.9rem; color: var(--muted); line-height: 1.2; }
 
 /* Buttons */
-.btn { font-weight: 700; border-radius: 0.5rem; }
+.btn { font-weight: 700; border-radius: var(--r-control); }
+/* Pressing a button gives a small, quick response; nothing moves on hover */
+@media (prefers-reduced-motion: no-preference) {
+  .btn { transition: transform 160ms var(--ease-out), background-color 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+  .btn:active { transform: scale(0.97); }
+}
 .btn-primary {
   --bs-btn-bg: var(--primary);
   --bs-btn-border-color: var(--primary);
@@ -117,7 +138,9 @@ h1, h2, h3, h4, .h1, .h2, .h3, .h4, .navbar-brand {
   --bs-btn-hover-bg: #87301f;
   --bs-btn-hover-border-color: #87301f;
 }
-.link-danger { color: var(--danger) !important; }
+/* Destructive row links stay quiet until they are pointed at; red is a signal, not decoration */
+.link-danger { color: var(--muted) !important; text-decoration-color: currentColor !important; }
+.link-danger:hover, .link-danger:focus-visible { color: var(--danger) !important; }
 
 /* Forms */
 .form-control, .form-select { border-color: var(--control-line); background-color: var(--surface); }
@@ -137,20 +160,20 @@ h1, h2, h3, h4, .h1, .h2, .h3, .h4, .navbar-brand {
 input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--danger); }
 
 /* Messages: tinted surface with a thin border in the same hue */
-.alert { border: 1px solid; border-radius: 0.5rem; }
+.alert { border: 1px solid; border-radius: var(--r-panel); }
 .alert-success { background: var(--sage-tint); border-color: var(--sage); color: var(--ink); }
 .alert-danger { background: var(--danger-tint); border-color: var(--danger); color: var(--ink); }
 .alert-info { background: var(--primary-tint); border-color: var(--sky); color: var(--ink); }
 .alert-warning { background: var(--caution-tint); border-color: var(--caution); color: var(--ink); }
 
 /* Status badges: colour plus a word, never colour alone */
-.badge-status { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 0.2em 0.6em; border-radius: 0.3rem; }
+.badge-status { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 0.2em 0.6em; border-radius: var(--r-chip); }
 .badge-checked { background: var(--sage); color: var(--ink); }
 .badge-unknown { background: var(--caution); color: var(--ink); }
 
 /* Allergen chips, used wherever allergens are listed */
 .chips { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0; padding: 0; list-style: none; }
-.chip { font-size: 0.85rem; padding: 0.1em 0.55em; border: 1px solid var(--control-line); border-radius: 0.3rem; background: var(--surface); }
+.chip { font-size: 0.85rem; padding: 0.1em 0.55em; border: 1px solid var(--control-line); border-radius: var(--r-chip); background: var(--surface); }
 .chip-trace { border-style: dashed; color: var(--muted); }
 
 /* Page header with title and main action */
@@ -158,9 +181,9 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 .page-head h1 { margin: 0; }
 
 /* Tables become stacked cards on narrow screens, so nothing scrolls sideways. */
-.data-table { width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 0.5rem; border-collapse: separate; border-spacing: 0; }
+.data-table { width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-panel); border-collapse: separate; border-spacing: 0; }
 .data-table th, .data-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--line); vertical-align: top; }
-.data-table thead th { font-size: 0.9rem; color: var(--muted); font-weight: 700; background: var(--paper); }
+.data-table thead th { font-size: 0.85rem; color: var(--muted); font-weight: 400; }
 .data-table tbody tr:last-child td { border-bottom: 0; }
 .row-actions { white-space: nowrap; text-align: right; }
 .row-actions a + a { margin-left: 1rem; }
@@ -175,30 +198,32 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 }
 
 /* Allergen entry table in the ingredient form */
-.allergen-table { width: 100%; max-width: 36rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.5rem; border-collapse: separate; border-spacing: 0; }
-.allergen-table thead th { font-size: 0.9rem; color: var(--muted); background: var(--paper); }
+.allergen-table { width: 100%; max-width: 36rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-panel); border-collapse: separate; border-spacing: 0; }
+.allergen-table thead th { font-size: 0.85rem; color: var(--muted); font-weight: 400; }
 .allergen-table td, .allergen-table th { vertical-align: middle; padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--line); }
 .allergen-table tbody tr:last-child > * { border-bottom: 0; }
 .allergen-table td { text-align: center; }
 .allergen-table .form-check-input { width: 1.25rem; height: 1.25rem; margin: 0; }
 
-/* Cards on the dashboard: one surface style, used only there */
-.tile { display: block; height: 100%; padding: 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.75rem; color: var(--ink); text-decoration: none; }
-.tile:hover, .tile:focus-visible { border-color: var(--primary); }
-.tile h2 { font-size: 1.25rem; margin-bottom: 0.35rem; color: var(--primary-dark); }
-.tile p { color: var(--muted); margin: 0; }
+/* Dashboard: one strip of counts, divided by space and a tone step, not separate cards */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 1px; margin: 0 0 2.5rem; padding: 0; list-style: none; background: var(--line); border: 1px solid var(--line); border-radius: var(--r-panel); overflow: hidden; }
+.stats a { display: block; height: 100%; padding: 1rem 1.25rem 1.1rem; background: var(--surface); color: var(--ink); text-decoration: none; }
+.stats a:hover, .stats a:focus-visible { background: var(--primary-tint); }
+.stats a:focus-visible { outline-offset: -3px; }
+.stat-label { display: block; font-size: 0.9rem; color: var(--muted); }
+.stat-value { display: block; font-family: var(--font-display); font-size: 2rem; font-weight: 650; line-height: 1.1; color: var(--primary-dark); }
 
 /* Start page: the kitchen ticket shows the product's idea with a real example */
-.hero { padding: 2.5rem 0 3rem; }
-.hero h1 { font-size: clamp(2rem, 5vw, 3.1rem); max-width: 14em; margin-bottom: 1rem; }
+.hero { padding: 3rem 0 4rem; }
+.hero h1 { font-size: clamp(2.3rem, 5.5vw, 4.25rem); max-width: 12em; margin-bottom: 1rem; text-wrap: balance; }
 .ticket {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 0 0 0.75rem 0.75rem; /* square top like a ticket torn from the printer */
+  border-radius: 0 0 var(--r-panel) var(--r-panel); /* square top like a ticket torn from the printer */
   padding: calc(1.25rem + 6px) 1.4rem 1.25rem;
   max-width: 26rem;
-  /* the green header strip is an inset shadow, so it never fights the rounded corners */
-  box-shadow: inset 0 6px 0 var(--primary), 0 1px 0 var(--line), 0 12px 24px -18px rgba(13, 24, 33, 0.45);
+  /* the header strip is an inset shadow, so it never fights the rounded corners */
+  box-shadow: inset 0 6px 0 var(--primary);
   transform: rotate(-1.2deg);
 }
 .ticket-dish { font-family: var(--font-display); font-size: 1.35rem; font-weight: 650; margin-bottom: 0.75rem; }
@@ -208,14 +233,12 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 .trace-path { font-size: 0.95rem; }
 .trace-path .step { white-space: nowrap; }
 .trace-path .arrow { color: var(--muted); margin: 0 0.25rem; }
-@media (prefers-reduced-motion: no-preference) {
-  .ticket { transition: transform 0.3s ease; }
-  .ticket:hover { transform: rotate(0deg); }
-}
-.steps { counter-reset: step; list-style: none; padding: 0; display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
-.steps li { counter-increment: step; }
-.steps li::before { content: counter(step); display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--primary-tint); color: var(--primary-dark); font-weight: 700; margin-bottom: 0.5rem; }
+.home-section { padding: 4rem 0; }
+.steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+.steps li { padding-top: 1rem; border-top: 3px solid var(--sky); }
 .steps h3 { font-size: 1.15rem; }
+/* A piece of the real guest menu, shown at a fixed width so it reads like a phone */
+.guest-dishes.guest-preview { width: 100%; max-width: 24rem; padding: 1rem; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-panel); }
 
 /* Footer: the darkest brand colour anchors the page */
 .site-footer { background: var(--navy); font-size: 0.95rem; color: #c9d3dd; border-top: 0 !important; }
@@ -233,39 +256,34 @@ a:focus-visible, button:focus-visible, .btn:focus-visible, input:focus-visible, 
 /* Long words (e-mails, compound German nouns) wrap instead of widening the page */
 body { overflow-wrap: anywhere; }
 
-/* Header backgrounds must follow the tables' rounded corners */
-.data-table thead th:first-child, .allergen-table thead th:first-child { border-top-left-radius: 0.5rem; }
-.data-table thead th:last-child, .allergen-table thead th:last-child { border-top-right-radius: 0.5rem; }
-
 /* The declaration on a recipe page uses the ticket look, without the tilt */
 .ticket-flat { transform: none; max-width: none; }
-.ticket-flat:hover { transform: none; }
 
 /* Counter in the navigation, e.g. approvals waiting */
-.badge-count { background: var(--caution); color: var(--ink); font-size: 0.75rem; vertical-align: 0.1em; border-radius: 0.3rem; }
+.badge-count { background: var(--caution); color: var(--ink); font-size: 0.75rem; vertical-align: 0.1em; border-radius: var(--r-chip); }
 
 /* Menu page in the back office */
-.panel { height: 100%; padding: 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.75rem; }
+.panel { height: 100%; padding: 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-panel); }
 .panel h2 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--primary-dark); }
-.qr-panel img { display: block; margin: 0.25rem 0 0.75rem; background: #ffffff; border: 1px solid var(--line); border-radius: 0.4rem; }
+.qr-panel img { display: block; margin: 0.25rem 0 0.75rem; background: #ffffff; border: 1px solid var(--line); border-radius: var(--r-control); }
 .check-list { display: grid; gap: 0.35rem 1.5rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
 
 /* Guest menu: one narrow column that reads like a printed menu card, also at 360 px */
 .guest-container { max-width: 44rem; }
 .guest-head { background: var(--surface); border-bottom: 1px solid var(--line); box-shadow: inset 0 6px 0 var(--primary); padding: calc(1rem + 6px) 0 1rem; }
-.guest-kicker { font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.guest-sub { font-size: 0.95rem; color: var(--muted); }
 .lang-switch { display: flex; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
-.lang-switch a { display: inline-block; white-space: nowrap; overflow-wrap: normal; padding: 0.4rem 0.6rem; min-height: 44px; line-height: 1.75; border-radius: 0.4rem; color: var(--ink); text-decoration: none; }
+.lang-switch a { display: inline-block; white-space: nowrap; overflow-wrap: normal; padding: 0.4rem 0.6rem; min-height: 44px; line-height: 1.75; border-radius: var(--r-control); color: var(--ink); text-decoration: none; }
 .lang-switch a[aria-current="page"] { background: var(--primary-tint); color: var(--primary-dark); font-weight: 700; }
-.guest-filter { background: var(--surface); border: 1px solid var(--line); border-radius: 0.75rem; padding: 0.9rem 1.1rem; }
+.guest-filter { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-panel); padding: 0.9rem 1.1rem; }
 .guest-filter summary { font-weight: 700; cursor: pointer; min-height: 28px; }
 .allergen-grid { display: grid; gap: 0.4rem 1rem; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); }
 .guest .form-check-input { width: 1.2rem; height: 1.2rem; margin-top: 0.2rem; }
 .guest-status:empty { display: none; }
 .guest-status { color: var(--muted); }
 .guest-dishes { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem; }
-.guest-dish { background: var(--surface); border: 1px solid var(--line); border-radius: 0.75rem; padding: 1rem 1.1rem; }
-.ask-staff { padding: 0.45rem 0.7rem; border-radius: 0.4rem; background: var(--caution-tint); font-size: 0.95rem; }
+.guest-dish { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-panel); padding: 1rem 1.1rem; }
+.ask-staff { padding: 0.45rem 0.7rem; border-radius: var(--r-control); background: var(--caution-tint); font-size: 0.95rem; }
 .ask-staff-strong { box-shadow: inset 0 0 0 2px var(--caution); }
 
 /* Privacy policy and terms of use */

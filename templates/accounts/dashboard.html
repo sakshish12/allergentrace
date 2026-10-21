@@ -19,42 +19,14 @@
 </div>
 {% endif %}
 
-<div class="row g-3">
-  <div class="col-md-6 col-lg-3">
-    <a class="tile" href="{% url 'recipe_list' %}">
-      <h2>{% translate "Recipes" %}</h2>
-      <p>{% blocktranslate count counter=recipe_count %}{{ counter }} recipe{% plural %}{{ counter }} recipes{% endblocktranslate %}</p>
-    </a>
-  </div>
-  <div class="col-md-6 col-lg-3">
-    <a class="tile" href="{% url 'ingredient_list' %}">
-      <h2>{% translate "Ingredients" %}</h2>
-      <p>{% blocktranslate count counter=ingredient_count %}{{ counter }} ingredient{% plural %}{{ counter }} ingredients{% endblocktranslate %}</p>
-    </a>
-  </div>
-  <div class="col-md-6 col-lg-3">
-    <a class="tile" href="{% url 'supplier_list' %}">
-      <h2>{% translate "Suppliers" %}</h2>
-      <p>{% blocktranslate count counter=supplier_count %}{{ counter }} supplier{% plural %}{{ counter }} suppliers{% endblocktranslate %}</p>
-    </a>
-  </div>
-  <div class="col-md-6 col-lg-3">
-    <a class="tile" href="{% url 'equipment_list' %}">
-      <h2>{% translate "Equipment" %}</h2>
-      <p>{% blocktranslate count counter=equipment_count %}{{ counter }} piece of equipment{% plural %}{{ counter }} pieces of equipment{% endblocktranslate %}</p>
-    </a>
-  </div>
-  {% if user.membership.is_owner %}
-  <div class="col-md-6 col-lg-3">
-    <a class="tile" href="{% url 'staff_list' %}">
-      <h2>{% translate "Staff" %}</h2>
-      <p>{% translate "Accounts for your kitchen and service team" %}</p>
-    </a>
-  </div>
-  {% endif %}
-</div>
+<ul class="stats" aria-label="{% translate 'Your data' %}">
+  <li><a href="{% url 'recipe_list' %}"><span class="stat-label">{% translate "Recipes" %}</span><span class="stat-value">{{ recipe_count }}</span></a></li>
+  <li><a href="{% url 'ingredient_list' %}"><span class="stat-label">{% translate "Ingredients" %}</span><span class="stat-value">{{ ingredient_count }}</span></a></li>
+  <li><a href="{% url 'supplier_list' %}"><span class="stat-label">{% translate "Suppliers" %}</span><span class="stat-value">{{ supplier_count }}</span></a></li>
+  <li><a href="{% url 'equipment_list' %}"><span class="stat-label">{% translate "Equipment" %}</span><span class="stat-value">{{ equipment_count }}</span></a></li>
+</ul>
 
-<section class="mt-5 measure" aria-labelledby="start">
+<section class="measure" aria-labelledby="start">
   <h2 id="start" class="h4">{% translate "How to get started" %}</h2>
   <ol class="ps-3">
     <li class="mb-2">{% translate "Add the suppliers you buy from, so you know whom to ask about missing allergen data." %}</li>

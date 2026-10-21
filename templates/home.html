@@ -4,9 +4,9 @@
 {% block content %}
 <section class="hero row align-items-center gy-5">
   <div class="col-lg-7">
-    <h1>{% translate "Allergen lists for cafés and bakeries, calculated from your recipes." %}</h1>
+    <h1>{% translate "Allergen lists that follow your recipes" %}</h1>
     <p class="lead mb-4">
-      {% translate "Enter allergens once per ingredient. AllergenTrace works out every dish from its recipe, follows sauces and doughs into each dish that uses them, and warns about cross-contact from shared equipment." %}
+      {% translate "For cafés, bakeries and small kitchens. Enter allergens once per ingredient. AllergenTrace works out every dish from its recipe, follows sauces and doughs into each dish that uses them, and warns about cross-contact from shared equipment." %}
     </p>
     <div class="d-flex flex-wrap gap-2">
       <a class="btn btn-primary btn-lg" href="{% url 'signup' %}">{% translate "Register your business" %}</a>
@@ -34,7 +34,7 @@
   </div>
 </section>
 
-<section class="py-4 border-top" aria-labelledby="how">
+<section class="home-section" aria-labelledby="how">
   <h2 id="how" class="h3 mb-4">{% translate "How it works" %}</h2>
   <ol class="steps">
     <li>
@@ -50,5 +50,29 @@
       <p class="text-body-secondary mb-0">{% translate "Guests scan a QR code and hide what they cannot eat. Removing an allergen needs the owner's approval first." %}</p>
     </li>
   </ol>
+</section>
+<section class="home-section" aria-labelledby="guests">
+<div class="row gy-4 align-items-center">
+  <div class="col-lg-6">
+    <h2 id="guests" class="h3">{% translate "What your guests see" %}</h2>
+    <p class="lead mb-0">{% translate "Guests open the menu on their phone, tick what they cannot eat and see which dishes are left. A dish with an ingredient nobody has checked tells them to ask staff instead of guessing." %}</p>
+  </div>
+  <div class="col-lg-6 d-flex justify-content-lg-center">
+    <ul class="guest-preview guest-dishes" data-ui aria-label="{% translate 'Example: guest menu on a phone' %}">
+      <li class="guest-dish">
+        <h3 class="h5 mb-2">Pasta al pesto</h3>
+        <ul class="chips" aria-label="{% translate 'Allergens' %}"><li class="chip">{% translate "Gluten" %}</li><li class="chip">{% translate "Milk" %}</li><li class="chip">{% translate "Nuts" %}</li>{% translate "Peanuts" as peanuts %}<li class="chip chip-trace">{% blocktranslate with label=peanuts %}may contain {{ label }}{% endblocktranslate %}</li></ul>
+      </li>
+      <li class="guest-dish">
+        <h3 class="h5 mb-2">{% translate "Carrot cake" %}</h3>
+        <p class="ask-staff mb-0"><strong>{% translate "Please ask our staff." %}</strong> {% translate "Not all ingredients of this dish are checked yet." %}</p>
+      </li>
+      <li class="guest-dish">
+        <h3 class="h5 mb-2">{% translate "Green salad" %}</h3>
+        <p class="mb-0 text-body-secondary">{% translate "None of the 14 main allergens" %}</p>
+      </li>
+    </ul>
+  </div>
+</div>
 </section>
 {% endblock %}
