@@ -6,6 +6,10 @@ AllergenTrace lets cafés, bakeries and small restaurants enter allergens once p
 
 This repository is part of the IU portfolio "Project: Software Engineering" (DLMCSPSE01) by Sakshi Sharma.
 
+## Try it online
+
+The app runs at <https://allergentrace.onrender.com> (free hosting: after 15 minutes without visitors the first page takes up to a minute to load). Register your own business on the start page, or use the demo café whose login data is given in the portfolio submission. The step-by-step guide for owners, kitchen staff, service staff and guests is in the [installation and user manual](docs/installation-manual.pdf).
+
 ## Run it locally with Docker (recommended)
 
 Requirements: [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows, macOS) or Docker Engine with the Compose plugin (Linux).
@@ -60,9 +64,14 @@ GitHub Actions runs the linter, Django's deployment checks, the tests against Po
 | Business rules of the calculation | [docs/requirements/business-rules.md](docs/requirements/business-rules.md) |
 | Non-functional requirements | [docs/requirements/non-functional-requirements.md](docs/requirements/non-functional-requirements.md) |
 | Technical debt | [docs/technical-debt.md](docs/technical-debt.md) |
+| Architecture diagrams (PlantUML sources and images) | [docs/architecture/](docs/architecture/) |
+| User interface design and colours | [docs/design.md](docs/design.md) |
+| Test report (automated and manual tests) | [docs/test-report.md](docs/test-report.md) |
+| Usability test | [docs/usability-test.md](docs/usability-test.md) |
+| Installation and user manual (PDF) | [docs/installation-manual.pdf](docs/installation-manual.pdf) |
 
 The sprint plan is visible as [milestones](https://github.com/sakshish12/allergentrace/milestones) and the user stories as [issues](https://github.com/sakshish12/allergentrace/issues).
 
 ## Third-party software
 
-Django, psycopg, dj-database-url, Gunicorn, WhiteNoise, django-simple-history, WeasyPrint and segno (see `requirements.txt`), and Bootstrap 5.3 (MIT licence, bundled in `static/vendor/bootstrap`).
+Django, psycopg, dj-database-url, Gunicorn, WhiteNoise, django-simple-history, WeasyPrint, segno and bcrypt (see `requirements.txt`), Bootstrap 5.3 (MIT licence, bundled in `static/vendor/bootstrap`), and the fonts Atkinson Hyperlegible and Bricolage Grotesque (SIL Open Font Licence, bundled in `static/vendor/fonts`). E-mails in the cloud version are sent through the [Brevo](https://www.brevo.com/) transactional e-mail API.

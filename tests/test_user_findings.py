@@ -89,3 +89,25 @@ def test_deleting_a_supplier_or_equipment_in_use_warns_first(owner_client, busin
     Recipe.objects.create(business=business, name="Fries").equipment.add(fryer)
     page = owner_client.get(reverse("equipment_delete", args=[fryer.pk])).content.decode()
     assert "Used for: Fries" in page
+
+
+def test_history_shows_names_not_ids_for_linked_entries(owner_client, business, owner):
+    farm = Supplier.objects.create(business=business, name="Farm")
+    milk = Ingredient.objects.create(business=business, name="Milk")
+    milk.supplier = farm
+    milk.save()
+    page = owner_client.get(reverse("history")).content.decode()
+    assert "– → Farm" in page or "&ndash; → Farm" in page
+
+
+def test_new_dish_is_published_without_approval_once_it_has_parts(owner_client, business):
+    from publication.models import PublishedDeclaration
+
+    soup = Recipe.objects.create(business=business, name="Soup", is_dish=True)
+    sync(business)
+    assert not PublishedDeclaration.objects.filter(recipe=soup).exists()
+    cream = Ingredient.objects.create(business=business, name="Cream", contains=["milk"], status="complete")
+    soup.components.create(ingredient=cream)
+    sync(business)
+    published = PublishedDeclaration.objects.get(recipe=soup).published()
+    assert not published.ask_staff and {a.value for a in published.contains} == {"milk"}

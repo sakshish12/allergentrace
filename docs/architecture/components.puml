@@ -8,7 +8,8 @@ package "Presentation layer" {
   [Guest menu page\n(public, no login)] as Guest
 }
 package "Application layer (Django apps)" {
-  [accounts\nusers, businesses, roles] as accounts
+  [accounts\nusers, businesses, roles,\nsign-up, password reset] as accounts
+  [accounts.security\nrate limit, delay,\nlockout] as security
   [catalog\nsuppliers, ingredients,\nequipment] as catalog
   [recipes\nrecipes, components,\nrepository adapter] as recipes
   [publication\ndeclarations, approval,\nmenu, PDF, QR, history] as publication
@@ -18,8 +19,10 @@ package "Domain layer" {
   interface "RecipeRepository" as port
 }
 package "Infrastructure" {
-  database "PostgreSQL 17" as db
+  database "PostgreSQL 17\n(data + cache table)" as db
+  [config.mail\nBrevo e-mail backend] as mail
 }
+cloud "Brevo API" as brevo #FFFFFF
 
 UI --> publication
 UI --> recipes
@@ -34,4 +37,9 @@ publication --> engine : sync, impact,\nmerge
 recipes ..|> port : implements
 engine --> port : reads graph
 accounts --> db : Django ORM\n(all four apps)
+accounts --> security : login,\nsign-up
+security --> db : counters in\nthe cache table
+accounts --> mail : activation,\nreset, lockout
+publication --> mail : approval needed
+mail --> brevo : HTTPS
 @enduml

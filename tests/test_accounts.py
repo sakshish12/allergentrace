@@ -140,3 +140,6 @@ def test_create_demo_needs_password_and_runs_once(monkeypatch, client):
     owner = Membership.objects.get(role=Role.OWNER).business
     assert owner.name == "Café Demo" and owner.recipes.exists()
     assert client.login(username="demo-kitchen@example.com", password="Demo-pass-2026")
+    from publication.models import PublishedDeclaration
+
+    assert PublishedDeclaration.objects.filter(recipe__business=owner).count() == owner.recipes.count()

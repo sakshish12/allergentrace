@@ -62,15 +62,22 @@ def _changes(record):
     previous = record.prev_record
     if previous is None:
         return []
-    return [
-        {
-            "field": record.instance._meta.get_field(c.field).verbose_name,
-            "old": _value(c.old),
-            "new": _value(c.new),
-        }
-        for c in record.diff_against(previous).changes
-        if c.field not in HIDDEN_FIELDS
-    ]
+    rows = []
+    for c in record.diff_against(previous).changes:
+        if c.field in HIDDEN_FIELDS:
+            continue
+        field = record.instance._meta.get_field(c.field)
+        old, new = (_related(field, c.old), _related(field, c.new)) if field.many_to_one else (c.old, c.new)
+        rows.append({"field": field.verbose_name, "old": _value(old), "new": _value(new)})
+    return rows
+
+
+def _related(field, pk):
+    """A foreign key is stored as an id; the history shows the name (e.g. the approving user's e-mail)."""
+    if pk is None:
+        return None
+    obj = field.related_model._default_manager.filter(pk=pk).first()
+    return str(obj) if obj else _("(deleted)")
 
 
 def _value(value):

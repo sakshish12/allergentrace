@@ -18,7 +18,8 @@ def sync(business):
 
     Returns the impact: {recipe id: Change} for recipes whose calculation changed.
     """
-    calculated = {rid: d.summary() for rid, d in declarations_for(business).items()}
+    declarations = declarations_for(business)
+    calculated = {rid: d.summary() for rid, d in declarations.items()}
     rows = {
         p.recipe_id: p
         for p in PublishedDeclaration.objects.select_for_update().filter(recipe__business=business)
@@ -28,6 +29,10 @@ def sync(business):
     to_create, to_update = [], []
     for rid, summary in calculated.items():
         row = rows.get(rid)
+        if row is None and () in declarations[rid].unknown:
+            # A new recipe without parts is published once it has some; until then guests see
+            # "ask staff", and the first real declaration does not wait for an approval.
+            continue
         published = merge(row.published() if row else None, summary)
         if row is None:
             row = PublishedDeclaration(recipe_id=rid)

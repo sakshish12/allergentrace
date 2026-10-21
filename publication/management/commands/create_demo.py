@@ -11,6 +11,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from accounts.models import Business, Membership, Role
+from publication.services import sync
 from recipes.example_data import load_example_data
 
 BUSINESS_NAME = "Café Demo"
@@ -31,8 +32,10 @@ class Command(BaseCommand):
         if not password:
             self.stdout.write("DJANGO_DEMO_PASSWORD is not set, no demo café created.")
             return
-        owner_email = ACCOUNTS[0][0]
-        if get_user_model().objects.filter(username=owner_email).exists():
+        owner = get_user_model().objects.filter(username=ACCOUNTS[0][0]).select_related("membership").first()
+        if owner:
+            # Calculate again, so the guest menu is right even for a demo café made by an older version.
+            sync(owner.membership.business)
             self.stdout.write("Demo café already exists.")
             return
         business = Business.objects.create(name=BUSINESS_NAME)
@@ -40,4 +43,5 @@ class Command(BaseCommand):
             user = get_user_model().objects.create_user(username=email, email=email, password=password)
             Membership.objects.create(user=user, business=business, role=role)
         ingredients, recipes = load_example_data(business)
+        sync(business)  # publish the declarations, as a saved change in the app would
         self.stdout.write(f"Demo café created with {ingredients} ingredients and {recipes} recipes.")

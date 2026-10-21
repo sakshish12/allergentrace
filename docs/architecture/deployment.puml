@@ -10,10 +10,13 @@ node "GitHub" as gh {
   [GitHub Actions\nlint, tests, Docker smoke test] as ci
 }
 node "Render (Frankfurt, free web service)" as render {
-  [Docker container\ngunicorn + Django + WhiteNoise] as web
+  [Docker container\ngunicorn + Django + WhiteNoise\nstart.sh: migrate, cache table,\ndemo café] as web
+}
+node "Brevo (EU)" as brevo {
+  [Transactional\ne-mail API] as mailapi
 }
 node "Neon (Frankfurt, free)" as neon {
-  database "PostgreSQL 17" as pg
+  database "PostgreSQL 17\n(data, history,\nlogin counters)" as pg
 }
 actor "Browser /\nsmartphone" as browser
 
@@ -22,4 +25,5 @@ repo --> ci : on every push
 repo --> web : auto-deploy main
 web --> pg : DATABASE_URL (TLS)
 browser --> web : HTTPS
+web --> mailapi : HTTPS API\n(SMTP is blocked\non the free plan)
 @enduml
