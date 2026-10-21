@@ -6,7 +6,7 @@
   <h1 class="h2">{% translate "Staff" %}</h1>
   <a class="btn btn-primary" href="{% url 'staff_create' %}">{% translate "New staff account" %}</a>
 </div>
-<p class="measure text-body-secondary">{% translate "Kitchen staff can edit ingredients, suppliers and recipes. Service staff can only read them." %}</p>
+<p class="measure text-body-secondary">{% translate "Kitchen staff can edit ingredients, suppliers and recipes. Service staff can only read them." %} {% translate "Accounts are deactivated instead of deleted, so the change history still shows who made each change." %}</p>
 <table class="data-table">
   <thead><tr><th scope="col">{% translate "E-mail" %}</th><th scope="col">{% translate "Role" %}</th><th scope="col">{% translate "Status" %}</th><th scope="col"><span class="visually-hidden">{% translate "Actions" %}</span></th></tr></thead>
   <tbody>
