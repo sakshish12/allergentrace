@@ -144,7 +144,7 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 .alert-warning { background: var(--caution-tint); border-color: var(--caution); color: var(--ink); }
 
 /* Status badges: colour plus a word, never colour alone */
-.badge-status { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 0.2em 0.6em; border-radius: 999px; }
+.badge-status { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 0.2em 0.6em; border-radius: 0.3rem; }
 .badge-checked { background: var(--sage); color: var(--ink); }
 .badge-unknown { background: var(--caution); color: var(--ink); }
 
@@ -242,7 +242,7 @@ body { overflow-wrap: anywhere; }
 .ticket-flat:hover { transform: none; }
 
 /* Counter in the navigation, e.g. approvals waiting */
-.badge-count { background: var(--caution); color: var(--ink); font-size: 0.75rem; vertical-align: 0.1em; }
+.badge-count { background: var(--caution); color: var(--ink); font-size: 0.75rem; vertical-align: 0.1em; border-radius: 0.3rem; }
 
 /* Menu page in the back office */
 .panel { height: 100%; padding: 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.75rem; }
@@ -267,3 +267,6 @@ body { overflow-wrap: anywhere; }
 .guest-dish { background: var(--surface); border: 1px solid var(--line); border-radius: 0.75rem; padding: 1rem 1.1rem; }
 .ask-staff { padding: 0.45rem 0.7rem; border-radius: 0.4rem; background: var(--caution-tint); font-size: 0.95rem; }
 .ask-staff-strong { box-shadow: inset 0 0 0 2px var(--caution); }
+
+/* Privacy policy and terms of use */
+.legal h2 { font-size: 1.15rem; margin-top: 1.75rem; }

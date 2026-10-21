@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Terms of use" %} – AllergenTrace{% endblock %}
+{% block meta_description %}{% translate "The terms for using AllergenTrace, a free student project for allergen information in food businesses." %}{% endblock %}
+{% block content %}
+<article class="measure legal">
+  <h1 class="h2 mb-3">{% translate "Terms of use" %}</h1>
+  <p class="text-body-secondary">{% translate "Last updated: October 2026" %}</p>
+
+  <h2>{% translate "1. What AllergenTrace is" %}</h2>
+  <p>{% translate "AllergenTrace is a free student project of Sakshi Sharma at IU International University of Applied Sciences. It helps small food businesses calculate and publish the allergen information of their dishes. It is not a commercial service." %}</p>
+
+  <h2>{% translate "2. Your responsibility for allergen information" %}</h2>
+  <p>{% translate "AllergenTrace calculates allergens only from the data you enter. The food business remains responsible for correct allergen information under Regulation (EU) No 1169/2011 and the German LMIDV. Check ingredients against their product labels and tell guests with severe allergies to speak to your staff." %}</p>
+
+  <h2>{% translate "3. Accounts" %}</h2>
+  <ul>
+    <li>{% translate "Register only with an e-mail address you are allowed to use, and keep your password secret." %}</li>
+    <li>{% translate "The owner of a business decides who gets a staff account and can deactivate it at any time." %}</li>
+    <li>{% translate "Do not try to access data of other businesses, overload the service or bypass its security measures." %}</li>
+  </ul>
+
+  <h2>{% translate "4. Availability" %}</h2>
+  <p>{% translate "The service runs on free hosting plans. It aims to be available most of the time, but there is no guarantee; after a pause the first page can take up to a minute to load. Keep the printed allergen list as your written documentation." %}</p>
+
+  <h2>{% translate "5. Liability" %}</h2>
+  <p>{% translate "The service is provided free of charge and as it is. Liability is limited to intent and gross negligence, as far as the law allows; liability for injury to life, body or health is not limited." %}</p>
+
+  <h2>{% translate "6. Changes and end of the service" %}</h2>
+  <p>{% translate "These terms can change when the project changes. As a student project, the service may be ended; registered owners will be told by e-mail beforehand so they can download their allergen list." %}</p>
+
+  <p class="mt-4"><a href="{% url 'privacy' %}">{% translate "Privacy policy" %}</a>{% if contact_email %} · {% translate "Contact:" %} <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>{% endif %}</p>
+</article>
+{% endblock %}

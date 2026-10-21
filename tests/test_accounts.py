@@ -1,7 +1,10 @@
 """US-01 (register a business) and US-02 (staff accounts with roles)."""
 
+import re
+
 import pytest
 from django.contrib.auth import get_user_model
+from django.core import mail
 from django.urls import reverse
 
 from accounts.models import Business, Membership, Role
@@ -15,27 +18,46 @@ SIGNUP = {
 }
 
 
-def test_signup_creates_business_and_owner_and_logs_in(client):
+def activation_link(message):
+    return re.search(r"http://testserver(/activate/\S+/)", message.body).group(1)
+
+
+def test_signup_sends_link_that_activates_and_logs_in(client):
     response = client.post(reverse("signup"), SIGNUP)
-    assert response.status_code == 302 and response.url == reverse("dashboard")
+    assert response.status_code == 302 and response.url == reverse("signup_done")
     membership = Membership.objects.get(user__username="anna@example.com")
-    assert membership.role == Role.OWNER
+    assert membership.role == Role.OWNER and not membership.user.is_active
     assert membership.business.name == "Bäckerei Sonnenschein"
+    response = client.get(activation_link(mail.outbox[-1]))
+    assert response.url == reverse("dashboard")
     assert client.get(reverse("dashboard")).status_code == 200
+    client.logout()
+    assert client.get(activation_link(mail.outbox[-1])).url == reverse("signup")  # used only once
 
 
-def test_signup_rejects_existing_email_and_weak_password(client, owner):
+def test_signup_does_not_reveal_existing_email(client, owner):
     response = client.post(reverse("signup"), {**SIGNUP, "email": owner.email})
-    assert "already exists" in response.content.decode()
-    response = client.post(
-        reverse("signup"), {**SIGNUP, "email": "new@example.com", "password1": "123", "password2": "123"}
-    )
-    assert response.status_code == 200
-    assert Business.objects.count() == 1  # only the owner fixture's business
+    assert response.status_code == 302 and response.url == reverse("signup_done")  # same answer as new
+    assert "already has an account" in mail.outbox[-1].body and mail.outbox[-1].to == [owner.email]
+    assert Business.objects.count() == 1
+
+
+def test_signup_answers_every_invalid_input_with_one_message(client):
+    for data in (
+        {**SIGNUP, "password1": "123", "password2": "123"},
+        {**SIGNUP, "email": "not-an-email"},
+        {**SIGNUP, "business_name": "<script>alert(1)</script>"},
+        {**SIGNUP, "email": "a" * 200 + "@example.com"},
+    ):
+        html = client.post(reverse("signup"), data).content.decode()
+        assert "We could not register you with these details" in html
+        assert "aria-invalid" not in html  # no field is singled out
+    assert not Business.objects.exists()
 
 
 def test_login_is_case_insensitive_and_error_does_not_reveal_account(client):
     client.post(reverse("signup"), SIGNUP)
+    client.get(activation_link(mail.outbox[-1]))
     client.logout()
     ok = client.post(reverse("login"), {"username": "ANNA@example.com", "password": SIGNUP["password1"]})
     assert ok.status_code == 302
@@ -43,8 +65,8 @@ def test_login_is_case_insensitive_and_error_does_not_reveal_account(client):
     wrong_password = client.post(reverse("login"), {"username": "anna@example.com", "password": "nope"})
     unknown_user = client.post(reverse("login"), {"username": "nobody@example.com", "password": "nope"})
     assert wrong_password.status_code == unknown_user.status_code == 200
-    assert "E-mail or password is not correct" in wrong_password.content.decode()
-    assert "E-mail or password is not correct" in unknown_user.content.decode()
+    assert "Incorrect email or password" in wrong_password.content.decode()
+    assert "Incorrect email or password" in unknown_user.content.decode()
 
 
 def test_owner_creates_kitchen_account(owner_client, owner):

@@ -31,6 +31,7 @@ pip install -r requirements-dev.txt
 export DJANGO_DEBUG=True           # Windows: set DJANGO_DEBUG=True
 export DATABASE_URL=postgres://USER:PASSWORD@localhost:5432/allergentrace
 python manage.py migrate
+python manage.py createcachetable   # table for login rate limits
 python manage.py runserver
 ```
 

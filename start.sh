@@ -3,6 +3,8 @@
 set -e
 echo "[start] applying database migrations"
 python manage.py migrate --noinput
+echo "[start] creating the cache table for login rate limits (if missing)"
+python manage.py createcachetable
 echo "[start] giving existing rows a history snapshot if they have none (US-12)"
 python manage.py populate_history --auto
 echo "[start] starting web server on port ${PORT:-8000}"

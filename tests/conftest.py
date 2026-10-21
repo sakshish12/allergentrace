@@ -13,8 +13,13 @@ def _test_settings(settings):
     }
     # The test client speaks plain HTTP; HTTPS is checked by `manage.py check --deploy` in CI.
     settings.SECURE_SSL_REDIRECT = False
-    # Fast hashing; password security itself is Django's and not under test here.
+    # Fast hashing for speed; tests/test_security.py checks the real bcrypt settings.
     settings.PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+    # Each test starts with empty rate-limit and lockout counters.
+    settings.CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+    from django.core.cache import cache
+
+    cache.clear()
 
 
 @pytest.fixture

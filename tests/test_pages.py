@@ -99,3 +99,12 @@ def test_success_messages_close_themselves_and_can_be_closed(owner_client):
     alert = re.search(r'<div class="alert alert-success[^>]*>', html).group(0)
     assert "data-autohide" in alert
     assert 'data-bs-dismiss="alert"' in html and "js/app.js" in html
+
+
+def test_privacy_and_terms_pages_are_linked_in_the_footer(client, settings):
+    settings.CONTACT_EMAIL = "kontakt@example.com"
+    home = client.get(reverse("home")).content.decode()
+    for name, text in (("privacy", "Privacy policy"), ("terms", "Terms of use")):
+        assert reverse(name) in home
+        page = client.get(reverse(name)).content.decode()
+        assert text in page and "mailto:kontakt@example.com" in page

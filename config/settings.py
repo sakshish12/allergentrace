@@ -84,8 +84,18 @@ DATABASES = {
         default="postgres://allergentrace:allergentrace@localhost:5432/allergentrace",
     )
 }
+# Login rate limits and lockouts are kept in a cache table in the same database, so all
+# workers share them and they survive restarts (see accounts/security.py).
+CACHES = {"default": {"BACKEND": "django.core.cache.backends.db.DatabaseCache", "LOCATION": "django_cache"}}
 # Fail with a clear error instead of hanging when the database cannot be reached.
 DATABASES["default"].setdefault("OPTIONS", {})["connect_timeout"] = 10
+
+# Passwords are stored with bcrypt (cost 12) over SHA-256. Older PBKDF2 hashes still verify and
+# Django re-hashes them with bcrypt at the user's next successful login.
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+]
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -121,6 +131,22 @@ BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "")
 EMAIL_BACKEND = (
     "config.mail.BrevoEmailBackend" if BREVO_API_KEY else "django.core.mail.backends.console.EmailBackend"
 )
+# Contact address shown in the privacy policy and the terms of use.
+CONTACT_EMAIL = os.environ.get("DJANGO_CONTACT_EMAIL", "")
+
+PASSWORD_RESET_TIMEOUT = 3 * 24 * 3600  # also the validity of registration links
+
+# Security events (rejected logins, rate limits, lockouts) go to the console, i.e. the Render log.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "loggers": {
+        "accounts.security": {"handlers": ["console"], "level": "INFO"},
+        "config.mail": {"handlers": ["console"], "level": "INFO"},
+    },
+}
+
 DEFAULT_FROM_EMAIL = os.environ.get("DJANGO_DEFAULT_FROM_EMAIL", "AllergenTrace <noreply@localhost>")
 
 if not DEBUG:

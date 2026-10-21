@@ -3,6 +3,9 @@
 {% block content %}
 <div class="measure">
   <h1 class="h2 mb-4">{% firstof title object %}</h1>
+  {% if validlink is False %}
+  <p>{% translate "This link is invalid or has already been used." %} <a href="{% url 'password_reset' %}">{% translate "Request a new link" %}</a></p>
+  {% else %}
   <form method="post" novalidate>
     {% csrf_token %}
     {% include "_form_errors.html" %}
@@ -11,8 +14,9 @@
     {% endfor %}
     <div class="d-flex flex-wrap gap-2 mt-4">
       <button class="btn btn-primary" type="submit">{% translate "Save" %}</button>
-      <a class="btn btn-outline-secondary" href="{{ view.success_url }}">{% translate "Cancel" %}</a>
+      {% if cancel_url is not False %}<a class="btn btn-outline-secondary" href="{% firstof cancel_url view.success_url %}">{% translate "Cancel" %}</a>{% endif %}
     </div>
   </form>
+  {% endif %}
 </div>
 {% endblock %}

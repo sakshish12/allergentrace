@@ -2,7 +2,7 @@
 {% load i18n %}
 {% block title %}{% translate "Register your business" %} – AllergenTrace{% endblock %}
 {% block meta_description %}{% translate "Register your café, bakery or restaurant with AllergenTrace and manage allergen information for every dish." %}{% endblock %}
-{% block content %}
+{% block content %}{% url "terms" as terms_url %}{% url "privacy" as privacy_url %}
 <div class="measure" style="max-width: 30rem">
   <h1 class="h2 mb-2">{% translate "Register your business" %}</h1>
   <p class="text-body-secondary mb-4">{% translate "You become the owner of the account and can add your staff afterwards." %}</p>
@@ -10,6 +10,7 @@
     {% csrf_token %}
     {% include "_form_errors.html" %}
     {% for field in form %}<div class="mb-3">{{ field.as_field_group }}</div>{% endfor %}
+    <p class="small text-body-secondary">{% blocktranslate with terms=terms_url privacy=privacy_url %}By registering you accept the <a href="{{ terms }}">terms of use</a> and confirm that you have read the <a href="{{ privacy }}">privacy policy</a>.{% endblocktranslate %}</p>
     <button class="btn btn-primary mt-2" type="submit">{% translate "Create account" %}</button>
   </form>
   <p class="mt-4">{% translate "Already registered?" %} <a href="{% url 'login' %}">{% translate "Log in" %}</a></p>

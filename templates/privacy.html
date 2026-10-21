@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Privacy policy" %} – AllergenTrace{% endblock %}
+{% block meta_description %}{% translate "Which personal data AllergenTrace processes, why, where it is stored and which rights you have." %}{% endblock %}
+{% block content %}
+<article class="measure legal">
+  <h1 class="h2 mb-3">{% translate "Privacy policy" %}</h1>
+  <p class="text-body-secondary">{% translate "Last updated: October 2026" %}</p>
+
+  <h2>{% translate "1. Who is responsible" %}</h2>
+  <p>{% translate "AllergenTrace is a student project of Sakshi Sharma at IU International University of Applied Sciences. She is the controller under the General Data Protection Regulation (GDPR)." %}
+    {% if contact_email %}{% translate "Contact:" %} <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>{% else %}{% translate "Contact: through the" %} <a href="https://github.com/sakshish12/allergentrace" rel="noopener">{% translate "project repository on GitHub" %}</a>{% endif %}.</p>
+
+  <h2>{% translate "2. Guests reading a menu" %}</h2>
+  <p>{% translate "The public menu needs no account and sets no cookies. The allergens you select are sent only as part of the page address and are not stored. Like every web server, the hosting provider briefly records technical data of each request (IP address, time, requested page) to operate and protect the service." %}</p>
+
+  <h2>{% translate "3. Business accounts" %}</h2>
+  <ul>
+    <li>{% translate "Account data: e-mail address, a password stored only as a bcrypt hash, role, and the name of the business." %}</li>
+    <li>{% translate "Content you enter: suppliers (including contact persons, phone numbers and e-mail addresses), ingredients, recipes, equipment and menus." %}</li>
+    <li>{% translate "Change history: which account changed what and when, so the business can document its allergen information." %}</li>
+    <li>{% translate "Cookies: one session cookie that keeps you logged in, and one cookie that protects forms against cross-site request forgery. Both are technically necessary; there are no tracking or advertising cookies." %}</li>
+  </ul>
+  <p>{% translate "Legal basis: providing the service you registered for (Art. 6(1)(b) GDPR). Businesses that enter contact details of their suppliers are responsible for being allowed to do so." %}</p>
+
+  <h2>{% translate "4. Security" %}</h2>
+  <p>{% translate "To protect accounts against password guessing, failed logins are counted per IP address for one minute and per account for up to 30 minutes; the account is stored only as a one-way hash. Rejected logins are logged with the IP address but never with a password. Legal basis: our legitimate interest in a secure service (Art. 6(1)(f) GDPR)." %}</p>
+
+  <h2>{% translate "5. E-mails" %}</h2>
+  <p>{% translate "We send e-mails only when they are needed: to confirm a registration, to reset a password, when sign-in was paused after failed attempts, and to tell owners that a change waits for their approval. There is no newsletter." %}</p>
+
+  <h2>{% translate "6. Service providers" %}</h2>
+  <ul>
+    <li>{% translate "Render Services, Inc. (USA): runs the application in its Frankfurt (EU) region." %}</li>
+    <li>{% translate "Neon, Inc. (USA): hosts the database in its Frankfurt (EU) region." %}</li>
+    <li>{% translate "Sendinblue SAS (Brevo, France): delivers the e-mails listed above." %}</li>
+  </ul>
+  <p>{% translate "These providers process data only on our behalf. Where a provider is based outside the EU, a transfer of data to that country cannot be excluded; the providers state that they use the EU standard contractual clauses for this." %}</p>
+
+  <h2>{% translate "7. How long data is kept" %}</h2>
+  <p>{% translate "Account data and content are kept until the account is deleted. Ask the contact above to delete your account; the business owner can deactivate staff accounts at any time. Security counters expire automatically after one minute or 30 minutes." %}</p>
+
+  <h2>{% translate "8. Your rights" %}</h2>
+  <p>{% translate "You have the right to access, correct and delete your data, to restrict or object to its processing and to receive it in a portable format (Art. 15 to 21 GDPR). You can also complain to a data protection supervisory authority, for example the Berlin Commissioner for Data Protection and Freedom of Information." %}</p>
+</article>
+{% endblock %}

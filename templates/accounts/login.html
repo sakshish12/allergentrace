@@ -7,9 +7,7 @@
   <h1 class="h2 mb-4">{% translate "Log in" %}</h1>
   <form method="post" novalidate>
     {% csrf_token %}
-    {% if form.errors %}
-    <div class="alert alert-danger" role="alert">{% translate "E-mail or password is not correct." %}</div>
-    {% endif %}
+    {% include "_form_errors.html" %}
     <div class="mb-3">
       <label class="form-label" for="id_username">{% translate "E-mail" %}</label>
       <input class="form-control" type="email" name="username" id="id_username" autocomplete="username"
@@ -22,6 +20,8 @@
     <input type="hidden" name="next" value="{{ next }}">
     <button class="btn btn-primary mt-2" type="submit">{% translate "Log in" %}</button>
   </form>
+  <p class="mt-4 mb-1"><a href="{% url 'password_reset' %}">{% translate "Forgot your password?" %}</a></p>
+  <p class="text-body-secondary small">{% translate "Just registered? Confirm your e-mail address with the link we sent you before you log in." %}</p>
   <p class="mt-4">{% translate "New here?" %} <a href="{% url 'signup' %}">{% translate "Register your business" %}</a></p>
 </div>
 {% endblock %}

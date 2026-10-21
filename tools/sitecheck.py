@@ -3,11 +3,12 @@ at phone and desktop width.
 
 Manual check, not part of CI. Start the app on an empty database first, then run:
     pip install playwright && python -m playwright install chromium
-    BASE_URL=http://127.0.0.1:8002 python tools/sitecheck.py screenshots/
+    BASE_URL=http://127.0.0.1:8002 SERVER_LOG=server.log python tools/sitecheck.py screenshots/
 It reports broken links, missing titles or descriptions and horizontal overflow at 360 px and 1280 px.
 """
 
 import os
+import re
 import sys
 from urllib.parse import urljoin, urlparse
 
@@ -75,6 +76,9 @@ with sync_playwright() as p:
     owner.fill("#id_password1", "Kuchen-und-Kaffee-9")
     owner.fill("#id_password2", "Kuchen-und-Kaffee-9")
     submit(owner)
+    # Locally the confirmation e-mail is printed to the server log (console e-mail backend).
+    with open(os.environ["SERVER_LOG"], encoding="utf-8") as server_log:
+        owner.goto(re.findall(r"http://\S+/activate/\S+/", server_log.read())[-1])
     owner.goto(f"{BASE}/app/ingredients/new/")
     owner.screenshot(path=f"{OUT}/d-ingredient-form-no-supplier.png", full_page=True)
     owner.goto(f"{BASE}/app/suppliers/new/")

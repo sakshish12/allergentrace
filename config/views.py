@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import connection
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -5,6 +6,11 @@ from django.shortcuts import render
 
 def home(request):
     return render(request, "home.html")
+
+
+def page(request, template):
+    """Static information pages (privacy policy, terms of use)."""
+    return render(request, template, {"contact_email": settings.CONTACT_EMAIL})
 
 
 def health(request):
