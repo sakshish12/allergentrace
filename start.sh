@@ -7,5 +7,7 @@ echo "[start] creating the cache table for login rate limits (if missing)"
 python manage.py createcachetable
 echo "[start] giving existing rows a history snapshot if they have none (US-12)"
 python manage.py populate_history --auto
+echo "[start] creating the demo café for reviewers (only if DJANGO_DEMO_PASSWORD is set)"
+python manage.py create_demo
 echo "[start] starting web server on port ${PORT:-8000}"
 exec gunicorn config.wsgi --bind "0.0.0.0:${PORT:-8000}" --workers 2

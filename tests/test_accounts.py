@@ -122,3 +122,21 @@ def test_user_without_business_is_refused(client):
     user = get_user_model().objects.create_user(username="admin@example.com", password="pw")
     client.force_login(user)
     assert client.get(reverse("dashboard")).status_code == 403
+
+
+@pytest.mark.django_db
+def test_create_demo_needs_password_and_runs_once(monkeypatch, client):
+    from django.core.management import call_command
+
+    monkeypatch.delenv("DJANGO_DEMO_PASSWORD", raising=False)
+    call_command("create_demo")
+    assert not Membership.objects.exists()
+
+    monkeypatch.setenv("DJANGO_DEMO_PASSWORD", "Demo-pass-2026")
+    call_command("create_demo")
+    call_command("create_demo")  # second run changes nothing
+    roles = sorted(Membership.objects.values_list("role", flat=True))
+    assert roles == [Role.SERVICE, Role.KITCHEN, Role.OWNER]
+    owner = Membership.objects.get(role=Role.OWNER).business
+    assert owner.name == "Café Demo" and owner.recipes.exists()
+    assert client.login(username="demo-kitchen@example.com", password="Demo-pass-2026")

@@ -25,6 +25,7 @@ services:
       DJANGO_SECRET_KEY: local-docker-compose-key-not-for-production
       DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
       DJANGO_SECURE_SSL_REDIRECT: "False"
+      DJANGO_DEMO_PASSWORD: ${DJANGO_DEMO_PASSWORD:-}
     depends_on:
       db:
         condition: service_healthy

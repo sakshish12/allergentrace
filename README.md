@@ -18,6 +18,8 @@ docker compose up --build
 
 Open <http://localhost:8000>. The first start takes a few minutes because Docker downloads Python and PostgreSQL. Stop the app with `Ctrl+C`; `docker compose down -v` also deletes the local database.
 
+For a ready-to-try café, set a password before the first start, for example `DJANGO_DEMO_PASSWORD=Demo-2026 docker compose up --build`. The start script then creates "Café Demo" with example data and three accounts, `demo-owner@example.com`, `demo-kitchen@example.com` and `demo-service@example.com`, all with that password. Without the variable you register your own business on the start page.
+
 To check that the app and the database are running, open <http://localhost:8000/health/>. It should show `{"status": "ok", "database": "ok"}`.
 
 ## Run it without Docker (for development)
