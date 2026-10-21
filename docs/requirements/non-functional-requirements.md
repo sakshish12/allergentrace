@@ -6,7 +6,7 @@ The non-functional requirements are structured along the product quality model o
 |---|---|---|---|
 | NFR-01 | Functional suitability (correctness) | The allergen calculation follows BR-1 to BR-6 for every recipe graph. | Unit and property-based tests (pytest, Hypothesis); 100 % branch coverage of `allergen_engine`. |
 | NFR-02 | Security (confidentiality, integrity) | A user can only read and change data of their own business, and only within the rights of their role. | Automated access-control tests for every view. |
-| NFR-03 | Security | The application uses HTTPS in production, Django's CSRF and XSS protection, and stores passwords only as hashes. | `manage.py check --deploy` in CI; code review. |
+| NFR-03 | Security | The application uses HTTPS in production and Django's CSRF and XSS protection; passwords are stored only as bcrypt hashes; logins are limited per IP address and paused per account after repeated failures; error messages do not reveal whether an account exists. | `manage.py check --deploy` in CI; code review. |
 | NFR-04 | Interaction capability (usability) | A first-time owner can create a dish with five ingredients in under five minutes without help. | Manual usability test with test users (TC-U1). |
 | NFR-05 | Interaction capability (accessibility) | The guest menu meets WCAG 2.2 level AA for contrast, text size and keyboard use. | Manual test with a contrast checker and keyboard only. |
 | NFR-06 | Performance efficiency | The guest menu of a business with 100 dishes is rendered in under one second server time, once the server is running. | Measurement in a test with seeded data. |

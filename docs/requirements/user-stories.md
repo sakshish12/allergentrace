@@ -10,7 +10,7 @@ Roles inherit rights: Owner ⊃ Kitchen ⊃ Service. Guests do not log in.
 - **Priority:** Must | **Points:** 3 | **Sprint:** 1
 - **Story:** As an owner, I want to register my business together with my owner account, so that I can manage the allergen data of my business in one place.
 - **Acceptance criteria:**
-  - A registration form asks for business name, owner e-mail and password; after submitting, the owner is logged in.
+  - A registration form asks for business name, owner e-mail and password; the owner confirms the e-mail address with a link and is then logged in.
   - Login and logout work; a wrong password shows an error and does not reveal whether the e-mail exists.
   - All data created later belongs to exactly one business.
 

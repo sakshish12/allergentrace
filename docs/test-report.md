@@ -66,6 +66,10 @@ The whole site was also used the way a careless first-time user would: odd input
 
 Checked without findings: other businesses' data cannot be opened, roles are enforced on every action, ingredients and recipes that are still used cannot be deleted, a recipe cannot contain itself, HTML in names is shown as text, unusual guest menu addresses do not cause errors, and the browser's Back button after logging out does not show app pages.
 
-## 4. Usability test
+## 4. Performance (NFR-06)
+
+A business with 100 dishes of five ingredients each was created locally, and its guest menu was requested ten times with the production settings. The median server time was 7 ms, the slowest request 11 ms, well under the one second that NFR-06 allows. On the free cloud plan the server is slower and sleeps when idle (TD-01), so the first request after a pause is not covered by this measurement.
+
+## 5. Usability test
 
 A pilot with one participant; see [usability-test.md](usability-test.md). NFR-04 was met (3 min 41 s for a dish with five ingredients).
