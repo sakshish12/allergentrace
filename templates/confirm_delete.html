@@ -4,6 +4,7 @@
 {% block content %}
 <div class="measure">
   <h1 class="h2 mb-3">{% blocktranslate %}Delete “{{ object }}”?{% endblocktranslate %}</h1>
+  {% if warning %}<div class="alert alert-warning" role="status">{{ warning }}</div>{% endif %}
   <p>{% translate "This cannot be undone." %}</p>
   <form method="post" class="d-flex flex-wrap gap-2">
     {% csrf_token %}

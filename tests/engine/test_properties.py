@@ -35,6 +35,13 @@ def kitchens(draw):
     return InMemoryRepository(ingredients, recipes, equipment)
 
 
+def has_empty_recipe(repo, rid):
+    recipe = repo.recipes()[rid]
+    if not recipe.ingredient_ids and not recipe.recipe_ids:
+        return True
+    return any(has_empty_recipe(repo, sid) for sid in recipe.recipe_ids)
+
+
 def leaf_ingredients(repo, rid):
     recipe = repo.recipes()[rid]
     found = {repo.ingredients()[i] for i in recipe.ingredient_ids}
@@ -55,9 +62,10 @@ def test_declaration_matches_all_ingredients_at_any_depth(repo):
         assert set(declaration.contains) == contained
         assert set(declaration.may_contain) == traces
         assert not set(declaration.contains) & set(declaration.may_contain)
-        assert declaration.needs_staff == any(not i.known for i in leaves)
+        assert declaration.needs_staff == (any(not i.known for i in leaves) or has_empty_recipe(repo, rid))
         for allergen in Allergen:
             if declaration.status(allergen) is Status.FREE:
+                assert not has_empty_recipe(repo, rid)
                 assert all(i.known and allergen not in i.contains | i.may_contain for i in leaves)
 
 

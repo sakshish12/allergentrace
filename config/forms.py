@@ -1,4 +1,26 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
+
+
+class UniqueNameMixin:
+    """No two entries of one business share a name (ignoring case), so lists and pickers stay unambiguous."""
+
+    def __init__(self, *args, business, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.business = business
+
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        model = self._meta.model
+        if (
+            model.objects.filter(business=self.business, name__iexact=name)
+            .exclude(pk=self.instance.pk)
+            .exists()
+        ):
+            raise forms.ValidationError(
+                _("“%(name)s” already exists. Please choose another name."), params={"name": name}
+            )
+        return name
 
 
 class BootstrapFormMixin:

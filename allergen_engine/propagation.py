@@ -37,6 +37,9 @@ def declare_all(repo: RecipeRepository) -> dict[int, Declaration]:
             _inherit(contains[rid], contains[sid], name)
             _inherit(may_contain[rid], may_contain[sid], name)
             unknown[rid].update((name, *p) for p in unknown[sid])
+        if not recipe.ingredient_ids and not recipe.recipe_ids:
+            # BR-4: a recipe without parts proves nothing, so it is never shown as allergen-free.
+            unknown[rid].add(())
 
     # Pass 2: cross-contact needs the finished "contains" of every recipe (BR-3); dishes inherit
     # the cross-contact of their sub-recipes as well.

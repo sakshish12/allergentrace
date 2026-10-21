@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db import transaction
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes
@@ -30,6 +30,18 @@ class LoginView(auth_views.LoginView):
 
     template_name = "accounts/login.html"
     authentication_form = EmailLoginForm
+    redirect_authenticated_user = True  # someone already logged in goes straight to the app
+
+
+class LogoutView(auth_views.LogoutView):
+    """Logging out needs a POST (CSRF); typing /logout/ shows a button instead of an error page."""
+
+    http_method_names = ["get", "post", "options"]
+
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return redirect("home")
+        return render(request, "accounts/logout_confirm.html")
 
 
 @method_decorator(sensitive_post_parameters("password1", "password2"), name="dispatch")

@@ -46,7 +46,7 @@
         </ul>
         <div class="d-xl-flex align-items-center gap-3 py-2 py-xl-0">
           <div class="nav-context mb-2 mb-xl-0">
-            <div class="fw-bold text-body">{{ user.membership.business }}</div>
+            <div class="fw-bold text-body nav-business" title="{{ user.membership.business }}">{{ user.membership.business }}</div>
             <div>{{ user.membership.get_role_display }}</div>
           </div>
           <form method="post" action="{% url 'logout' %}">{% csrf_token %}

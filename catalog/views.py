@@ -70,6 +70,13 @@ class SupplierDeleteView(DeleteConfirmView):
     model = Supplier
     success_url = reverse_lazy("supplier_list")
 
+    def get_context_data(self, **kwargs):
+        names = [str(i) for i in self.object.ingredients.order_by("name")]
+        warning = _("These ingredients keep their allergen data but will have no supplier: %(names)s.")
+        return super().get_context_data(
+            warning=warning % {"names": ", ".join(names)} if names else "", **kwargs
+        )
+
 
 # US-04: ingredients
 
@@ -134,4 +141,15 @@ class EquipmentUpdateView(SavedMessageMixin, BusinessFormMixin, UpdateView):
 
 class EquipmentDeleteView(DeleteConfirmView):
     model = Equipment
+
+    def get_context_data(self, **kwargs):
+        names = [str(r) for r in self.object.recipes.order_by("name")]
+        warning = _(
+            "Used for: %(names)s. “May contain” warnings that come from this equipment will be removed "
+            "after the owner approves."
+        )
+        return super().get_context_data(
+            warning=warning % {"names": ", ".join(names)} if names else "", **kwargs
+        )
+
     success_url = reverse_lazy("equipment_list")

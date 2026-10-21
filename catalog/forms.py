@@ -1,32 +1,33 @@
 from django import forms
+from django.core.validators import RegexValidator
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from allergen_engine.model import Allergen
 from catalog.models import ALLERGEN_CHOICES, Equipment, Ingredient, Supplier
-from config.forms import BootstrapFormMixin
+from config.forms import BootstrapFormMixin, UniqueNameMixin
 
 
-class SupplierForm(BootstrapFormMixin, forms.ModelForm):
+class SupplierForm(UniqueNameMixin, BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Supplier
         fields = ["name", "contact_person", "phone", "email"]
         widgets = {"phone": forms.TextInput(attrs={"type": "tel", "autocomplete": "tel"})}
 
-    def __init__(self, *args, business, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["phone"].validators.append(
+            RegexValidator(r"^[0-9+()/. -]*$", _("Use only digits, spaces and the signs + ( ) / - ."))
+        )
 
 
-class EquipmentForm(BootstrapFormMixin, forms.ModelForm):
+class EquipmentForm(UniqueNameMixin, BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Equipment
         fields = ["name", "dedicated"]
 
-    def __init__(self, *args, business, **kwargs):
-        super().__init__(*args, **kwargs)
 
-
-class IngredientForm(BootstrapFormMixin, forms.ModelForm):
+class IngredientForm(UniqueNameMixin, BootstrapFormMixin, forms.ModelForm):
     contains = forms.MultipleChoiceField(
         label=_("Contains"), choices=ALLERGEN_CHOICES, widget=forms.CheckboxSelectMultiple, required=False
     )
@@ -45,7 +46,7 @@ class IngredientForm(BootstrapFormMixin, forms.ModelForm):
         fields = ["name", "product_name", "supplier", "contains", "may_contain"]
 
     def __init__(self, *args, business, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, business=business, **kwargs)
         self.instance.business = business  # needed by Ingredient.clean() for the supplier check
         self.fields["supplier"].queryset = Supplier.objects.filter(business=business)
         self.fields["supplier"].empty_label = _("No supplier")

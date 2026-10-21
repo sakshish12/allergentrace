@@ -11,3 +11,15 @@ document.querySelectorAll(".alert[data-autohide]").forEach((alert) => {
   alert.addEventListener("focusout", start);
   start();
 });
+
+// A double click on "Save" must not create the same entry twice: a form is sent only once.
+// Coming back with the browser's Back button allows sending it again.
+document.querySelectorAll('form[method="post"]').forEach((form) => {
+  form.addEventListener("submit", (event) => {
+    if (form.dataset.sent) event.preventDefault();
+    form.dataset.sent = "1";
+  });
+});
+window.addEventListener("pageshow", () => {
+  document.querySelectorAll("form[data-sent]").forEach((form) => delete form.dataset.sent);
+});

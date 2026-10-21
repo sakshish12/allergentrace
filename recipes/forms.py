@@ -3,25 +3,29 @@ from django.utils.translation import gettext_lazy as _
 
 from allergen_engine.graph import would_create_cycle
 from catalog.models import Equipment, Ingredient
-from config.forms import BootstrapFormMixin
+from config.forms import BootstrapFormMixin, UniqueNameMixin
 from recipes.models import Component, Recipe
 from recipes.repository import DjangoRecipeRepository
 
 
-class RecipeForm(BootstrapFormMixin, forms.ModelForm):
+class RecipeForm(UniqueNameMixin, BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Recipe
         fields = ["name", "is_dish"]
 
-    def __init__(self, *args, business, **kwargs):
-        super().__init__(*args, **kwargs)
+
+class CommaDecimalField(forms.DecimalField):
+    """Accepts 0,5 as well as 0.5: kitchens in Germany write decimals with a comma."""
+
+    def to_python(self, value):
+        return super().to_python(value.replace(",", ".") if isinstance(value, str) else value)
 
 
 class ComponentForm(BootstrapFormMixin, forms.Form):
     """Adds an ingredient ("i:<id>") or a sub-recipe ("r:<id>") to a recipe."""
 
     part = forms.ChoiceField(label=_("Ingredient or recipe"))
-    quantity = forms.DecimalField(
+    quantity = CommaDecimalField(
         label=_("Quantity"), required=False, min_value=0, max_digits=8, decimal_places=2
     )
     unit = forms.CharField(label=_("Unit (g, ml, pieces …)"), required=False, max_length=20)

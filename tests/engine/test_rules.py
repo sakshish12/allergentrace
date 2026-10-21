@@ -73,6 +73,14 @@ def test_br4_unknown_ingredient_means_ask_staff_never_free(pasta_al_pesto):
     assert dish.status(A.PEANUTS) is Status.MAY_CONTAIN
 
 
+def test_br4_recipe_without_parts_means_ask_staff(pasta_al_pesto):
+    pasta_al_pesto.recipe_nodes[20] = rec(20, "Soup of the day", [])
+    pasta_al_pesto.recipe_nodes[21] = rec(21, "Lunch menu", [], recipes=[20])
+    declarations = declare_all(pasta_al_pesto)
+    assert declarations[20].unknown == ((),) and declarations[20].status(A.EGGS) is Status.ASK_STAFF
+    assert declarations[21].unknown == (("Soup of the day",),)
+
+
 def test_br5_cycle_is_detected():
     with pytest.raises(CycleError) as error:
         topological_order({1: [2], 2: [3], 3: [1]})
