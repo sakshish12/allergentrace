@@ -63,9 +63,8 @@ class SignupView(FormView):
             Membership.objects.create(user=user, business=business, role=Role.OWNER)
             self._send_activation(user)
         else:
-            make_password(
-                form.cleaned_data["password1"]
-            )  # same work as a new account, so timing tells nothing
+            # Hash anyway: the same work as for a new account, so the response time tells nothing.
+            make_password(form.cleaned_data["password1"])
             if _pending_owner(existing):
                 self._send_activation(existing)
             else:
