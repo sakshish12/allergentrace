@@ -6,24 +6,22 @@ AllergenTrace is used by café and bakery staff during a working day and read by
 
 ## Colours
 
-The interface uses the AllergenTrace website colour palette. All text and control colours meet WCAG 2.2 level AA (checked with the WCAG contrast formula).
+The interface uses a warm, cheerful palette of four colours: coral, peach, lemon and mint. The four are light, so text always sits on them in a dark ink, and a few darker tones are derived for text, links and borders. All text and control colours meet WCAG 2.2 level AA (checked with the WCAG contrast formula).
 
 | Token | Hex | Use | Contrast |
 |---|---|---|---|
-| Mist | `#F0F4EF` | page background | – |
-| Navy | `#0D1821` | body text, footer background | 16.2 : 1 on mist |
-| Slate | `#344966` | buttons, links, focus ring, logo | 9.2 : 1 with white text |
-| Light blue | `#B4CDED` | information messages, active menu item, footer links | 11.0 : 1 on navy |
-| Sage | `#BFCC94` | "Checked" badges, success messages, tick in the logo | 10.5 : 1 with navy text |
-| Muted (derived) | `#4A5A70` | secondary text | 6.3 : 1 on mist |
-| Control line (derived) | `#7A8796` | borders of inputs and checkboxes | 3.7 : 1 (non-text, min. 3 : 1) |
+| Coral | `#DE7272` | main buttons, logo, ticket strip, active menu item | 5.1 : 1 with ink text |
+| Peach | `#FFCA88` | "Unknown" data and "Please ask staff" | 10.7 : 1 with ink text |
+| Lemon | `#FFF6A9` | start page band, footer links, text selection, info messages | 14.4 : 1 with ink |
+| Mint | `#B4E4D6` | "Checked" badges, success messages, start page band | 11.4 : 1 with ink text |
+| Paper (derived) | `#FFFCF0` | page background | – |
+| Ink (derived) | `#2A1F23` | body text, footer background | 15.5 : 1 on paper |
+| Muted (derived) | `#6B5359` | secondary text | 6.8 : 1 on paper, 5.0 : 1 on mint |
+| Deep mint (derived) | `#1D6B5C` | links, focus ring, ticked checkboxes | 6.2 : 1 on paper |
+| Control line (derived) | `#8C7A7E` | borders of inputs and checkboxes | 3.9 : 1 (non-text, min. 3 : 1) |
+| Red | `#A3302B` | errors and deleting | 7.0 : 1 with white text |
 
-Two signal colours stay outside the brand palette on purpose, because they carry safety meaning and must never look like decoration:
-
-| Token | Hex | Use | Contrast |
-|---|---|---|---|
-| Amber | `#E8B04A` | "Unknown" data and "Please ask staff" | 9.2 : 1 with navy text |
-| Red | `#A63A2B` | delete actions and errors | 6.4 : 1 with white text |
+Peach is the one brand colour with a fixed meaning inside the app: it marks missing allergen data. Red is kept outside the palette for errors and deleting, so it is never mistaken for decoration; coral buttons use dark text and red ones white text, so the two do not look alike.
 
 Status is never shown by colour alone: every badge also carries a word ("Checked", "Unknown").
 
